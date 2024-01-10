@@ -1,0 +1,45 @@
+{
+	"name": "Reatomized",
+	"tree": {
+		"$className": "DataModel",
+
+		"StarterPlayer": {
+			"StarterCharacterScripts": {
+				"[Rojo]": {
+					"$className": "Folder",
+					"$path": "Source/Player/Character"
+				}
+			},
+			"StarterPlayerScripts": {
+				"[Rojo]": {
+					"$className": "Folder",
+					"$path": "Source/Player/Player"
+				}
+			}
+		},
+		"ServerScriptService": {
+			"[Rojo]": {
+				"$className": "Folder",
+				"$path": "Source/Server"
+			}
+		},
+		"ServerStorage": {
+			"[Rojo]": {
+				"$className": "Folder",
+				"$path": "Source/Data"
+			}
+		},
+		"ReplicatedStorage": {
+			"[Rojo]": {
+				"$className": "Folder",
+				"$path": "Source/Shared"
+			}
+		},
+		"ReplicatedFirst": {
+			"[Rojo]": {
+				"$className": "Folder",
+				"$path": "Source/Cache"
+			}
+		}
+	}
+}
