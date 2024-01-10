@@ -19,7 +19,7 @@ Handler.Limiter = 0
 Handler.CurrentVel = 0
 Handler.SToG = nil
 
---local CameraService = require(ReplicatedStorage.OpenResources.CameraService)
+local CameraService = require(ReplicatedStorage.OpenResources.CameraService)
 
 function GetSelf()
 	return Handler
@@ -88,7 +88,7 @@ end
 function Handler:PosMenuCamera()
 	local NewCamera = workspace.CurrentCamera
 	FadeEffect(1)
-	--³:ChangeFOV(70, true)
+	CameraService:ChangeFOV(70, true)
 	NewCamera.CameraType = Enum.CameraType.Scriptable
 	NewCamera.CFrame = CameraPoses.Main.CFrame
 	RunService:BindToRenderStep("MainMenuCamera", Enum.RenderPriority.Camera.Value, WaveIdleEffectUpdt)
@@ -126,7 +126,7 @@ function Handler:NonEuclideanScene()
 	local NewCamera = workspace.CurrentCamera
 	NewCamera.CameraType = Enum.CameraType.Scriptable
 	NewCamera.CFrame = CameraPoses.Transaction1.CFrame
-	--CameraService:ChangeFOV(50, true)
+	CameraService:ChangeFOV(50, true)
 	local Distance1 = (CameraPoses.Transaction1.Position - CameraPoses.Main2.Position).Magnitude
 	local Time = Distance1 / 3
 	local Distance2 = (CameraPoses.Main3.Position - CameraPoses.Transaction2.Position).Magnitude
