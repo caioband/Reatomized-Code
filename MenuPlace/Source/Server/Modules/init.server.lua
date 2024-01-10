@@ -8,7 +8,7 @@ local Storage: { Module } = {}
 -- # ================================ MODULES ================================ #
 
 local function LoadModule(Module: ModuleScript): Module
-	ContentProvider:PreloadAsync(Module)
+	-- ContentProvider:PreloadAsync(Module)
 	return require(Module)
 end
 

@@ -1,15 +1,9 @@
-local ContentProvider = game:GetService("ContentProvider")
-local ProximityPromptService = game:GetService("ProximityPromptService")
 local Workspace = game:GetService("Workspace")
 
 local PromptService = {}
 
-ContentProvider:PreloadAsync({
-	Workspace:GetDescendants(),
-})
-
 local function CreateProximityBind(asset: any | ProximityPrompt, bind: (player: Player) -> nil)
-	if asset:IsA("ProximityPrompt") then
+	if not (asset:IsA("ProximityPrompt")) then
 		return
 	end
 
@@ -22,7 +16,7 @@ local function CreateProximityBind(asset: any | ProximityPrompt, bind: (player: 
 end
 
 -- # ================================ PROXIMITY PROMPT SERVICE ================================ #
-function ProximityPromptService:OnProximityTriggered(player: Player, event: string, ...)
+function PromptService:OnProximityTriggered(player: Player, event: string, ...)
 	if self.Events[event] then
 		self.Events[event](player, ...)
 	end
@@ -30,15 +24,17 @@ end
 local Events: { [string]: (player: Player, prompt: ProximityPrompt, complement: string) -> nil } = {
 	--> Default event, if it is not specified in the ProximityPrompt
 	["Interact"] = function(player, prompt, complement) end,
-	["StartGame"] = function(player, prompt)
-		print("StartGame")
-	end,
 }
-ProximityPromptService.Events = Events
+PromptService.Events = Events
 
 for _index, asset: any | ProximityPrompt in ipairs(Workspace:GetDescendants()) do
 	CreateProximityBind(asset, function(player: Player, event: string, prompt: ProximityPrompt, complement: string)
-		ProximityPromptService:OnProximityTriggered(player, event, prompt, complement)
+		PromptService:OnProximityTriggered(player, event, prompt, complement)
 	end)
 end
+Workspace.DescendantAdded:Connect(function(descendant)
+	CreateProximityBind(descendant, function(player: Player, event: string, prompt: ProximityPrompt, complement: string)
+		PromptService:OnProximityTriggered(player, event, prompt, complement)
+	end)
+end)
 return PromptService

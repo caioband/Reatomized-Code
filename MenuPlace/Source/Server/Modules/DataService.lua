@@ -40,7 +40,7 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 		if player:IsDescendantOf(Players) == true then
 			Profiles[player] = profile
 			Profile_Global[player] = profile
-			DataServiceRemote:FireClient(player, "Load", profile)
+			DataServiceRemote:FireClient(player, "Load", profile.Data)
 		else
 			profile:Release()
 		end

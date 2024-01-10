@@ -7,13 +7,13 @@
 			"StarterCharacterScripts": {
 				"[Rojo]": {
 					"$className": "Folder",
-					"$path": "Source/Player/Character"
+					"$path": "Source/Player/StarterCharacter"
 				}
 			},
 			"StarterPlayerScripts": {
 				"[Rojo]": {
 					"$className": "Folder",
-					"$path": "Source/Player/Player"
+					"$path": "Source/Player/PlayerScripts"
 				}
 			}
 		},
