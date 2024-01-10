@@ -23,6 +23,7 @@ DataService.ProfileStore = ProfileService.GetProfileStore(DataService.Index, Dat
 local Profiles = {}
 local Profile_Global = require(ReplicatedStorage["[Rojo]"].Profiles)
 
+---@diagnostic disable-next-line: undefined-type
 function DataService:LoadProfile(player: Player): Profile_Global.Profile
 	if Profiles[player] then
 		return Profiles[player]

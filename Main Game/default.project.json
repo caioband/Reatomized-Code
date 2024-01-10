@@ -7,38 +7,38 @@
 			"StarterCharacterScripts": {
 				"[Rojo]": {
 					"$className": "Folder",
-					"$path": "Source/Player/CharacterScripts"
+					"$path": "src/Player/CharacterScripts"
 				}
 			},
 			"StarterPlayerScripts": {
 				"[Rojo]": {
 					"$className": "Folder",
-					"$path": "Source/Player/PlayerScripts"
+					"$path": "src/Player/PlayerScripts"
 				}
 			}
 		},
 		"ServerScriptService": {
 			"[Rojo]": {
 				"$className": "Folder",
-				"$path": "Source/Server"
+				"$path": "src/Server"
 			}
 		},
 		"ServerStorage": {
 			"[Rojo]": {
 				"$className": "Folder",
-				"$path": "Source/Data"
+				"$path": "src/Data"
 			}
 		},
 		"ReplicatedStorage": {
 			"[Rojo]": {
 				"$className": "Folder",
-				"$path": "Source/Shared"
+				"$path": "src/Shared"
 			}
 		},
 		"ReplicatedFirst": {
 			"[Rojo]": {
 				"$className": "Folder",
-				"$path": "Source/Cache"
+				"$path": "src/Cache"
 			}
 		}
 	}

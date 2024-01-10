@@ -81,7 +81,7 @@ local function FootstepLoop()
 
 				sound.Name = "step"
                 if ControllerHandler.IsCrouching then
-                    sound.Volume = 0.15
+                    sound.Volume = 0.05
                 else
                     sound.Volume = 0.33
                 end

@@ -38,7 +38,7 @@ Handler.FirstPerson.Modes.Panting.Idle.Y = .5
 
 
 function Handler:FirstPersonCamera(dt)
-    if ControllerHandler.CrouchTweeCompleted == false then return end
+    if ControllerHandler.CrouchTweeStarted == true then return end
     Handler.Limiter += dt
 
     if not Handler.FirstPerson.Activated then

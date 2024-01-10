@@ -9,13 +9,26 @@ local Humanoid = Character:WaitForChild("Humanoid")
 local Handler = {}
 Handler.IsRunning = false
 Handler.IsCrouching = false
-Handler.CrouchTweeCompleted = false
+Handler.CrouchTweeStarted = false
 Handler.StartingSpeed = 10
 Handler.MaxSpeed = 25
+Handler.CrouchSpeed = 5
 Handler.RunButtonPressed = false
 Handler.Actions = {
     ["Sprint"] = function(Is, Io)
         if Is == Enum.UserInputState.Begin then 
+            if Handler.IsCrouching then 
+                local goal = {}
+                Handler.IsCrouching = false
+                Handler.CrouchTweeCompleted = false
+                goal.CameraOffset = Vector3.new(0,0,0)
+                local crouchTween = TweenService:Create(Humanoid, TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal)
+                    crouchTween:Play()
+                    Handler.CrouchTweeStarted = true
+                crouchTween.Completed:Connect(function()
+                    Handler.CrouchTweeStarted = false
+                end)
+            end
             Handler.RunButtonPressed = true
             if not Handler.IsRunning then
                 Handler.IsRunning = true
@@ -43,16 +56,16 @@ Handler.Actions = {
             Handler.IsRunning = false
             if Humanoid then
                 if Handler.IsCrouching == false then
-                    Humanoid.WalkSpeed = 2
-                    Handler.IsCrouching = true
                     goal.CameraOffset = Vector3.new(0,-2,0)
-                end
-            end
-        elseif Is == Enum.UserInputState.End then
-            print("a")
-            if Humanoid then
-                if Handler.IsCrouching == true then
-                    Humanoid.WalkSpeed = 8
+                    Handler.IsCrouching = true
+                    task.spawn(function()
+                        repeat
+                            task.wait()
+                            Humanoid.WalkSpeed *= .98
+                        until Humanoid.WalkSpeed <= Handler.CrouchSpeed
+                    end)
+                else
+                    Humanoid.WalkSpeed = Handler.StartingSpeed
                     Handler.IsCrouching = false
                     Handler.CrouchTweeCompleted = false
                     goal.CameraOffset = Vector3.new(0,0,0)
@@ -61,9 +74,9 @@ Handler.Actions = {
         end
         local crouchTween = TweenService:Create(Humanoid, TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal)
         crouchTween:Play()
+        Handler.CrouchTweeStarted = true
         crouchTween.Completed:Connect(function()
-            
-            Handler.CrouchTweeCompleted = true
+            Handler.CrouchTweeStarted = false
         end)
     end,
 }
