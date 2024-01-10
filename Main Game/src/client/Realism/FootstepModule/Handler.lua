@@ -8,7 +8,7 @@ local Character = Player.Character or Player.CharacterAdded:Wait()
 
 -- Consts --
 local SPEED_GATE = 2
-local SPEED_MAXIMUM = 12
+local SPEED_MAXIMUM = 14
 local MIN_DISTANCE = 0
 local MAX_DISTANCE = 100
 
@@ -33,10 +33,11 @@ local function FootstepLoop()
     end
 
     local walkSpeed = Vector3.new(Character.HumanoidRootPart.AssemblyLinearVelocity.X, 0, Character.HumanoidRootPart.AssemblyLinearVelocity.Z).Magnitude 
-    local delayTime = math.clamp(0.5 * (SPEED_MAXIMUM / walkSpeed), 0.1, DELAY_UPPER)
-
+    local delayTime = math.clamp(.5 * (SPEED_MAXIMUM / walkSpeed), 0.1, DELAY_UPPER)
+   
     if walkSpeed > SPEED_GATE then
 
+        local HumanoidStateType = Character.Humanoid:GetState()
 		local castParams = RaycastParams.new()
 		castParams.FilterDescendantsInstances = {Character, workspace.CurrentCamera}
 		castParams.FilterType = Enum.RaycastFilterType.Exclude
@@ -50,6 +51,7 @@ local function FootstepLoop()
 		)
         --print(cast)
         if cast then
+            if (HumanoidStateType == Enum.HumanoidStateType.Jumping or HumanoidStateType == Enum.HumanoidStateType.FallingDown or HumanoidStateType == Enum.HumanoidStateType.Freefall) then return end
             local soundOveride = cast.Instance:GetAttribute("Material")
             --if cast.Instance.Name == "Wood Pallet" then
                 --local NewPart = Instance.new("Part", workspace.DebugFolder)
@@ -86,7 +88,6 @@ local function FootstepLoop()
 
 				Debris:AddItem(sound, sound.TimeLength + 0.1)
             end
-        else
         end
     end
     task.delay(delayTime, function()

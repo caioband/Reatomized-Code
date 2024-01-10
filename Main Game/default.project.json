@@ -10,14 +10,14 @@
     },
 
     "ServerScriptService": {
-      "Server": {
+      "[Rojo]": {
         "$path": "src/server"
       }
     },
 
     "StarterPlayer": {
       "StarterPlayerScripts": {
-        "Client": {
+        "[Rojo]": {
           "$path": "src/client"
         }
       }

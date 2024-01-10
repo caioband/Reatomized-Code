@@ -62,7 +62,7 @@ function Handler:FirstPersonCamera(dt)
 
        Handler.CurrentVel = Vel 
        --Camera.CFrame = Camera.CFrame * CFrame.new(0,CalculateCurve(7,.4) * Vel / 12, 0) * CFrame.Angles(0,0,math.rad(CalculateCurve(2.5,.4) * Vel/12) + math.rad(Drift))
-       Camera.CFrame = Camera.CFrame * CFrame.new(0,CalculateCurve(14,.2) * Vel / 12, 0) * CFrame.Angles(0,0,math.rad(CalculateCurve(5,.3) * Vel/12) + math.rad(Drift))
+       Camera.CFrame = Camera.CFrame * CFrame.new(0,CalculateCurve(14,.2) * Vel / 24, 0) * CFrame.Angles(0,0,math.rad(CalculateCurve(5,.3) * Vel/12) + math.rad(Drift))
        Character.Humanoid.CameraOffset = ConvCFrameToOrientation(sway)
 
        Handler.Limiter -= 1/60
