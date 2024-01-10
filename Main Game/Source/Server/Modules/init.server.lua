@@ -12,12 +12,14 @@ end
 
 local function LoadModules(): { [string]: Module }
 	for _, Module in ipairs(Modules) do
-		local module = LoadModule(Module)
-		Storage[Module.Name] = module
+		task.spawn(function()
+			local module = LoadModule(Module)
+			Storage[Module.Name] = module
 
-		if module.OnRequire then
-			module.OnRequire(module, Storage)
-		end
+			if module.OnRequire then
+				module.OnRequire(module, Storage)
+			end
+		end)
 	end
 	return Storage
 end
