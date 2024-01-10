@@ -5,6 +5,7 @@ local SoundService = game:GetService("SoundService")
 local Handler = {}
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
+local ControllerHandler = require(Character:WaitForChild("[Rojo]").Controller.Handler)
 
 -- Consts --
 local SPEED_GATE = 2
@@ -79,7 +80,11 @@ local function FootstepLoop()
 				LastNum = newNum
 
 				sound.Name = "step"
-				sound.Volume = 0.33
+                if ControllerHandler.IsCrouching then
+                    sound.Volume = 0.15
+                else
+                    sound.Volume = 0.33
+                end
 				sound.RollOffMode = Enum.RollOffMode.Linear
 				sound.RollOffMinDistance = MIN_DISTANCE
 				sound.RollOffMaxDistance = MAX_DISTANCE

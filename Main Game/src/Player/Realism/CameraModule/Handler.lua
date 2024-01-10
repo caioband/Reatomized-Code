@@ -6,6 +6,7 @@ local Camera = workspace.CurrentCamera
 local BaseFOV = Camera.FieldOfView
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
+local ControllerHandler = require(Character:WaitForChild("[Rojo]").Controller.Handler)
 local Vel,t,x,y
 local sway
 local MouseDelta
@@ -37,6 +38,7 @@ Handler.FirstPerson.Modes.Panting.Idle.Y = .5
 
 
 function Handler:FirstPersonCamera(dt)
+    if ControllerHandler.CrouchTweeCompleted == false then return end
     Handler.Limiter += dt
 
     if not Handler.FirstPerson.Activated then
@@ -62,8 +64,13 @@ function Handler:FirstPersonCamera(dt)
 
        Handler.CurrentVel = Vel 
        --Camera.CFrame = Camera.CFrame * CFrame.new(0,CalculateCurve(7,.4) * Vel / 12, 0) * CFrame.Angles(0,0,math.rad(CalculateCurve(2.5,.4) * Vel/12) + math.rad(Drift))
+       if ControllerHandler.IsCrouching then
+            Character.Humanoid.CameraOffset = ConvCFrameToOrientation(sway) + Vector3.new(0,-2,0)
+       elseif not ControllerHandler.IsCrouching then
+            Character.Humanoid.CameraOffset = ConvCFrameToOrientation(sway)
+       end 
+
        Camera.CFrame = Camera.CFrame * CFrame.new(0,CalculateCurve(14,.2) * Vel / 24, 0) * CFrame.Angles(0,0,math.rad(CalculateCurve(5,.3) * Vel/12) + math.rad(Drift))
-       Character.Humanoid.CameraOffset = ConvCFrameToOrientation(sway)
 
        Handler.Limiter -= 1/60
     end

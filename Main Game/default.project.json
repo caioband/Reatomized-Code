@@ -18,7 +18,12 @@
     "StarterPlayer": {
       "StarterPlayerScripts": {
         "[Rojo]": {
-          "$path": "src/client"
+          "$path": "src/Player"
+        }
+      },
+      "StarterCharacterScripts": {
+        "[Rojo]": {
+          "$path": "src/CharController"
         }
       }
     },
