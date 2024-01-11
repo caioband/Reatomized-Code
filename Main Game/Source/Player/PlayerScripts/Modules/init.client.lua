@@ -5,7 +5,7 @@ local DataStoreRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("
 local Types = require(ReplicatedStorage:WaitForChild("[Rojo]"):WaitForChild("Types"))
 
 ---@diagnostic disable-next-line: undefined-type
-local Storage : { Types.Module } = {}
+local Storage: { Types.Module } = {}
 
 local function OnProfileLoad(Profile)
 	print("Profile Loaded")
@@ -19,17 +19,16 @@ end
 
 local function LoadModules()
 	for _index, Module in ipairs(script:GetChildren()) do
-		task.spawn(function()
-			local module = require(Module)
-			Storage[Module.Name] = module
-		end)
+		local module = require(Module)
+		Storage[Module.Name] = module
 	end
 	for _name, Module in pairs(Storage) do
-		task.spawn(function()
-			if Module.OnRequire then
-				Module.OnRequire(Module, Storage)
-			end
-		end)
+		if Module.OnRequire then
+			print(_name, "OnRequire")
+			task.spawn(function()
+				Module:OnRequire(Storage)
+			end)
+		end
 	end
 end
 
