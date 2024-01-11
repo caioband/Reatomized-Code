@@ -108,15 +108,13 @@ local function FootstepLoop()
 end
 
 function Handler:Start()
+	task.wait(.1)
 	for i, v in pairs(Character:WaitForChild("HumanoidRootPart"):GetChildren()) do
 		if v:IsA("Sound") then
 			v:Destroy()
 		end
 	end
 
-	local Sound = workspace.Musics:WaitForChild("ReatomizedOst-LastMoments") :: Sound
-	Sound.Looped = true
-	Sound:Play()
 	FootstepLoop()
 end
 

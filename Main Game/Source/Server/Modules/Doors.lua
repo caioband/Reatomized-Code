@@ -81,6 +81,7 @@ function Door.new(door: Model)
 					v.CanCollide = true
 				end
 			end
+
 		end
 	end
 

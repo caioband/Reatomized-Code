@@ -61,6 +61,8 @@ end
 
 function Handler:SetItemToPartPos(Part: BasePart, ItemName): nil
 	if ReplicatedStorage.HouseItems:FindFirstChild(ItemName) ~= nil then
+		--print("a")
+		--if not Info.CFrameAttributeInfo[ItemName] or Part:GetAttribute(Info.CFrameAttributeInfo[ItemName]) then return end
 		local CloneModel = ReplicatedStorage.HouseItems:FindFirstChild(ItemName):Clone() :: Instance
 		CloneModel.Parent = workspace.HouseItemsSpawned
 
@@ -77,11 +79,16 @@ function Handler:SetItemToPartPos(Part: BasePart, ItemName): nil
 			CloneModel.Anchored = true
 		end
 		if Info.CFrameAttributeInfo[ItemName] and Part:GetAttribute(Info.CFrameAttributeInfo[ItemName]) then
+			--print("b")
 			local CFrameMultiplier = Part:GetAttribute(Info.CFrameAttributeInfo[ItemName])
 			CloneModel:PivotTo(Part.CFrame * CFrameMultiplier)
 		else
-			CloneModel:PivotTo(Part.CFrame)
+			--print("c")
+			CloneModel:Destroy()
+			return
 		end
+
+		task.wait()
 
 		local ProximityPrompt = Instance.new("ProximityPrompt", Parent)
 		ProximityPrompt.HoldDuration = 0
@@ -178,9 +185,11 @@ function Handler:RenderObjects()
 					self:SetItemToPartPos(v, ItemName)
 					continue
 				else
-					local Item = self:DecideItemToSpawn() :: string
-					self:SetItemToPartPos(v, Item)
-					continue
+					--if not v:GetAttribute("CannotSpawnOtherItemType") then
+						local Item = self:DecideItemToSpawn() :: string
+						self:SetItemToPartPos(v, Item)
+						continue
+					--end
 				end
 			else
 				local Item = self:DecideItemToSpawn() :: string

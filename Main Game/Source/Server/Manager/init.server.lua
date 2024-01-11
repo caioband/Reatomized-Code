@@ -89,6 +89,10 @@ local function OnServerReady()
 			char:MoveTo(BunkerSpawn.Position)
 			Effects:FireClient(player, "FadeEffect", 0.5, 1)
 		end
+		local Sound = workspace.Musics:WaitForChild("ReatomizedOst-LastMoments") :: Sound
+			if Sound.Playing then
+				Sound:Stop()
+			end
 	end)
 end
 
@@ -113,7 +117,7 @@ end
 
 local ReadyPlayers = {}
 local function OnServerStart()
-	Lighting.Ready.Enabled = true
+	--Lighting.Ready.Enabled = true
 
 	task.delay(60, function()
 		if #ReadyPlayers < (#Players:GetPlayers()) then

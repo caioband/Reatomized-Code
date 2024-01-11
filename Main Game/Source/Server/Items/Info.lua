@@ -14,7 +14,7 @@ local RarityItems = {
 	["GasMask"] = 25,
 	["Map"] = 20,
 	["Scout book"] = 10,
-	["Rifle"] = 10,
+	["Shotgun"] = 10,
 }
 
 RarityItems.CFrameAttributeInfo = {
@@ -29,7 +29,7 @@ RarityItems.CFrameAttributeInfo = {
 	["Map"] = "MapCFrameMultiplier",
 	["MedKit"] = "MedKitCFrameMultiplier",
 	["Radio"] = "RadioCFrameMultiplier",
-	["Rifle"] = "RifleCFrameMultiplier",
+	["Shotgun"] = "ShotgunCFrameMultiplier",
 	["Stacks"] = "StacksCFrameMultiplier",
 	["SuitCase"] = "SuitCaseCFrameMultiplier",
 	["ToolBox"] = "ToolboxCFrameMultiplier",

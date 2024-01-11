@@ -41,6 +41,7 @@ function Prompt.new(ProximityPrompt: ProximityPrompt)
 
 	createConnection(ProximityPrompt.Triggered, function(player: Player)
 		local Trigger = ProximityPrompt:GetAttribute("Trigger")
+		print(Trigger)
 		local Event = Events[Trigger]
 		if Event then
 			Event(self)
