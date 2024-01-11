@@ -18,7 +18,8 @@ function Prompt.new(ProximityPrompt: ProximityPrompt)
 	local Outline = Instance.new("Highlight", MainObject)
 	Outline.Name = "Outline"
 
-	Outline.Enabled = true
+	Outline.Enabled = false
+	Outline.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
 
 	Outline.FillColor = Color3.fromRGB(255, 255, 255)
 	Outline.OutlineColor = Color3.fromRGB(255, 255, 255)
@@ -46,14 +47,20 @@ function Prompt.new(ProximityPrompt: ProximityPrompt)
 		end
 	end)
 	createConnection(ProximityPrompt.PromptShown, function(player: Player)
+		Outline.Enabled = true
 		TweenService:Create(Outline, TweenInfo.new(0.2), {
-			OutlineTransparency = 0.45,
+			OutlineTransparency = 0.1,
+			FillTransparency = 0.9,
 		}):Play()
 	end)
 	createConnection(ProximityPrompt.PromptHidden, function(player: Player)
 		TweenService:Create(Outline, TweenInfo.new(0.2), {
 			OutlineTransparency = 1,
+			FillTransparency = 1,
 		}):Play()
+		task.delay(0.2, function()
+			Outline.Enabled = false
+		end)
 	end)
 
 	return self
