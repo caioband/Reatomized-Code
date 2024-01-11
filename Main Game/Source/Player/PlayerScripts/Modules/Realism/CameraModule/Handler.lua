@@ -6,6 +6,8 @@ local BaseFOV = Camera.FieldOfView
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local ControllerHandler = require(Character:WaitForChild("[Rojo]").Controller.Handler)
+
+local TweenService = game:GetService("TweenService")
 local Vel, t, x, y
 local sway
 local MouseDelta

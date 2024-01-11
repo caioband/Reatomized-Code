@@ -19,6 +19,7 @@ local GLOBAL_CONFIG = {
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local PlayerReady = Remotes:WaitForChild("PlayerReady")
+local Effects = Remotes:WaitForChild("Effects")
 
 local Storage: {
 	Realism: {
@@ -106,8 +107,25 @@ function GuiButtonObject.new(object: GuiButton)
 	return self
 end
 
+function GuiHandler:FadeEffect(Time: number, Transparency: number)
+	local ScreenGui = Player.PlayerGui:WaitForChild("ScreenGui")
+	local TransitionFrame = ScreenGui:WaitForChild("Frame")
+	local Tween1 = TweenService:Create(
+		TransitionFrame,
+		TweenInfo.new(Time, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+		{ BackgroundTransparency = Transparency }
+	)
+	Tween1:Play()
+end
+
 function GuiHandler:Init()
 	PlayerGui:WaitForChild("Ready"):WaitForChild("Freeze").Enabled = true
+
+	Effects.OnClientEvent:Connect(function(event: string, ...)
+		if event == "FadeEffect" then
+			self:FadeEffect(...)
+		end
+	end)
 
 	for _index, object: GuiObject in ipairs(PlayerGui:GetDescendants()) do
 		if object.ClassName:find("Button") then
