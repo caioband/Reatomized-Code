@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ProximityPrompt = require(script.Parent.ProximityPrompt)
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local GuiHandler = {}
@@ -144,6 +145,7 @@ function GuiHandler.OnRequire(self, str: {})
 
 	PlayerReady.OnClientEvent:Once(function()
 		Events["Game-Ready"](GuiButtonObjectStore["Game-Ready"], Storage)
+		ProximityPrompt.Start()
 	end)
 end
 

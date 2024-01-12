@@ -1,6 +1,8 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local PlayerReady = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("PlayerReady") :: RemoteEvent
 local Handler = {}
+Handler.ItemsLoaded = false
 local Info = require(script.Parent.Info)
 
 function Handler:WillSpawn()
@@ -198,6 +200,7 @@ function Handler:RenderObjects()
 			end
 		end
 	end
+	Handler.ItemsLoaded = true
 end
 
 function GetSelf()
