@@ -7,10 +7,10 @@ Sound.Looped = true
 Sound:Play()
 
 
-game.Players.PlayerAdded:Connect(function(player)
-    if ItemHandler.ItemsLoaded then
-        PlayerReady:FireClient(player)
-    end
-end)
+--game.Players.PlayerAdded:Connect(function(player)
+--    --if ItemHandler.ItemsLoaded then
+--    --    PlayerReady:FireClient(player)
+--    --end
+--end)
 
 ItemHandler:RenderObjects()

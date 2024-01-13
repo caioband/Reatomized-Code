@@ -69,13 +69,13 @@ end
 
 function ProximityPromptHandler.Start()
 	local prompts = CollectionService:GetTagged("Prompt")
-	--print(prompts)
+	print(prompts)
 	if #prompts < #workspace:WaitForChild("HouseItemsSpawned"):GetChildren() then
 		repeat
 			task.wait()
 		until #CollectionService:GetTagged("Prompt") == #workspace:WaitForChild("HouseItemsSpawned"):GetChildren()
 	end
-	--print(#CollectionService:GetTagged("Prompt"), #workspace:WaitForChild("HouseItemsSpawned"):GetChildren())
+	print(#CollectionService:GetTagged("Prompt"), #workspace:WaitForChild("HouseItemsSpawned"):GetChildren())
 	for _, prompt: ProximityPrompt in ipairs(prompts) do
 		--print("b")
 		Prompt.new(prompt)
