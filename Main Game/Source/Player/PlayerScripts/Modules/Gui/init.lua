@@ -145,7 +145,6 @@ function GuiHandler.OnRequire(self, str: {})
 
 	PlayerReady.OnClientEvent:Once(function()
 		Events["Game-Ready"](GuiButtonObjectStore["Game-Ready"], Storage)
-		ProximityPrompt.Start()
 	end)
 end
 

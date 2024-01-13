@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Handler = {}
@@ -6,6 +7,9 @@ local BaseFOV = Camera.FieldOfView
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local ControllerHandler = require(Character:WaitForChild("[Rojo]").Controller.Handler)
+
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local CameraRemote = Remotes:WaitForChild("Camera")
 
 local TweenService = game:GetService("TweenService")
 local Vel, t, x, y
@@ -138,10 +142,7 @@ function ConvCFrameToOrientation(_CFrame: CFrame)
 end
 
 function Handler:CreateNewCamera(CameraMode: string)
-	if self.RenderStepped then
-		RunService:UnbindFromRenderStep(self.RenderStepped)
-		self:Reset()
-	end
+	self:Reset()
 
 	if self.CameraModes[CameraMode] then
 		Handler.RenderStepped = CameraMode
@@ -150,8 +151,22 @@ function Handler:CreateNewCamera(CameraMode: string)
 end
 
 function Handler:Reset()
+	print("a")
+	if self.RenderStepped then
+		RunService:UnbindFromRenderStep(self.RenderStepped)
+		print(self.RenderStepped)
+	end
 	Player.CameraMode = Enum.CameraMode.Classic
 	self.FirstPerson.Activated = false
 end
+
+CameraRemote.OnClientEvent:Connect(function(event: string)
+	print("recebeu")
+	if event == "Enable" then
+		Handler:CreateNewCamera("FirstPerson")
+	elseif event == "Disable" then
+		Handler:Reset()
+	end
+end)
 
 return Handler

@@ -1,5 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
 local PlayerReady = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("PlayerReady") :: RemoteEvent
 local Handler = {}
 Handler.ItemsLoaded = false
@@ -188,9 +190,9 @@ function Handler:RenderObjects()
 					continue
 				else
 					--if not v:GetAttribute("CannotSpawnOtherItemType") then
-						local Item = self:DecideItemToSpawn() :: string
-						self:SetItemToPartPos(v, Item)
-						continue
+					local Item = self:DecideItemToSpawn() :: string
+					self:SetItemToPartPos(v, Item)
+					continue
 					--end
 				end
 			else
@@ -201,6 +203,7 @@ function Handler:RenderObjects()
 		end
 	end
 	Handler.ItemsLoaded = true
+	Players:SetAttribute("HouseItemLoad", true) --> This is for the client to know when the items are loaded
 end
 
 function GetSelf()

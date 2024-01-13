@@ -1,4 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ItemEvent = ReplicatedStorage.Remotes:WaitForChild("Item")
 local SoundService = game:GetService("SoundService")
+
 local Events: Events = {
 	["Pick-Up"] = function(self)
 		print("pick")

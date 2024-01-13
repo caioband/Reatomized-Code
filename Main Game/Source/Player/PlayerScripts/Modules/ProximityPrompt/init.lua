@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ProximityPromptService = game:GetService("ProximityPromptService")
 local TweenService = game:GetService("TweenService")
 local ProximityPromptHandler = {}
@@ -41,7 +42,6 @@ function Prompt.new(ProximityPrompt: ProximityPrompt)
 
 	createConnection(ProximityPrompt.Triggered, function(player: Player)
 		local Trigger = ProximityPrompt:GetAttribute("Trigger")
-		--print(Trigger)
 		local Event = Events[Trigger]
 		if Event then
 			Event(self)
@@ -68,25 +68,20 @@ function Prompt.new(ProximityPrompt: ProximityPrompt)
 end
 
 function ProximityPromptHandler.Start()
+	Players:GetAttributeChangedSignal("HouseItemLoad"):Wait()
+
 	local prompts = CollectionService:GetTagged("Prompt")
-	print(prompts)
-	if #prompts < #workspace:WaitForChild("HouseItemsSpawned"):GetChildren() then
-		repeat
-			task.wait()
-		until #CollectionService:GetTagged("Prompt") == #workspace:WaitForChild("HouseItemsSpawned"):GetChildren()
-	end
+
 	print(#CollectionService:GetTagged("Prompt"), #workspace:WaitForChild("HouseItemsSpawned"):GetChildren())
 	for _, prompt: ProximityPrompt in ipairs(prompts) do
-		--print("b")
 		Prompt.new(prompt)
 	end
 	CollectionService:GetInstanceAddedSignal("Prompt"):Connect(function()
-		--print("a")
 		local Tagged = CollectionService:GetTagged("Prompt")
 		local Object = Tagged[#Tagged]
 		Prompt.new(Object)
 	end)
 end
 
---ProximityPromptHandler.Start()
+ProximityPromptHandler.Start()
 return ProximityPromptHandler

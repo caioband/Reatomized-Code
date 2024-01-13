@@ -8,6 +8,8 @@ local Workspace = game:GetService("Workspace")
 local Remotes = ReplicatedStorage.Remotes
 local PlayerReady = Remotes.PlayerReady
 local Effects = Remotes.Effects
+local Animations = Remotes.Animations
+local Camera = Remotes.Camera
 
 local ServerReady = false
 
@@ -30,6 +32,15 @@ local function MakePlayerReady(plr: plr)
 	Lighting.Ready.Enabled = false
 end
 
+local function teleport(from: Player, to: BasePart)
+	Camera:FireClient(from, "Disable")
+	local char = from.Character or from.CharacterAdded:Wait()
+	char:PivotTo(to:GetPivot())
+	task.delay(1.5, function()
+		Camera:FireClient(from, "Enable")
+	end)
+end
+
 local function OnServerReady()
 	if ServerReady == true then
 		return
@@ -42,9 +53,9 @@ local function OnServerReady()
 
 	-- # 60 SECONDS TIMER
 	task.spawn(function()
-		for _i = 1, 60 do
+		for _i = 1, 10 do
 			task.wait(1)
-			Text.Text = `{60 - _i}`
+			Text.Text = `{10 - _i}`
 
 			if _i == 15 then
 				Alarm:Play()
@@ -65,7 +76,8 @@ local function OnServerReady()
 		for _i, player: Player in ipairs(saved) do
 			local char = player.Character or player.CharacterAdded:Wait()
 			char.PrimaryPart.Anchored = true
-			char:MoveTo(BunkerZone.Position)
+
+			teleport(player, BunkerZone)
 		end
 
 		task.wait(0.5)
@@ -74,7 +86,7 @@ local function OnServerReady()
 		local Sound = BunkerDoor:WaitForChild("Close")
 		Sound:Play()
 		for i = 1, 110, 1 do
-			BunkerDoor:PivotTo(BunkerDoor:GetPivot() * CFrame.Angles(0, math.rad(-1), 0))
+			BunkerDoor:PivotTo(BunkerDoor:GetPivot())
 			task.wait()
 		end
 
@@ -86,13 +98,13 @@ local function OnServerReady()
 		for _i, player: Player in ipairs(saved) do
 			local char = player.Character or player.CharacterAdded:Wait()
 			char.PrimaryPart.Anchored = false
-			char:MoveTo(BunkerSpawn.Position)
+			teleport(player, BunkerSpawn)
 			Effects:FireClient(player, "FadeEffect", 0.5, 1)
 		end
 		local Sound = workspace.Musics:WaitForChild("ReatomizedOst-LastMoments") :: Sound
-			if Sound.Playing then
-				Sound:Stop()
-			end
+		if Sound.Playing then
+			Sound:Stop()
+		end
 	end)
 end
 
@@ -105,14 +117,36 @@ local function setCollision(Char: Model)
 	end
 end
 
-local function OnPlayerJoin(player: plr)
-	local Character = player.Character or player.CharacterAdded:Wait()
-	local PrimaryPart = Character:WaitForChild("HumanoidRootPart")
+local posT = Workspace.YourHouse["Sofa Positions"]
+local positions = { posT.pos1, posT.pos2, posT.pos3, posT.pos4 }
 
+local function OnPlayerJoin(player: plr)
 	-- # LOCK PLAYER
-	PrimaryPart.Anchored = true
-	setCollision(Character)
 	player.CharacterAdded:Connect(setCollision)
+
+	for _, pos in ipairs(positions) do
+		if pos:GetAttribute("Used") == true then
+			continue
+		end
+		pos:SetAttribute("Used", true)
+
+		local AnimationId = pos:GetAttribute("Animation") :: number
+
+		local Character = player.Character or player.CharacterAdded:Wait()
+		local PrimaryPart = Character:WaitForChild("HumanoidRootPart")
+		Character.PrimaryPart = PrimaryPart
+
+		repeat
+			task.wait(0.1)
+		until Character.Parent == game.Workspace
+
+		Character:PivotTo(pos:GetPivot())
+		PrimaryPart.Anchored = true
+		setCollision(Character)
+
+		Animations:FireClient(player, AnimationId, { Looped = true })
+		return
+	end
 end
 
 local ReadyPlayers = {}
