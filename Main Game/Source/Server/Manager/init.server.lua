@@ -1,9 +1,12 @@
 local Lighting = game:GetService("Lighting")
 local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TeleportService = game:GetService("TeleportService")
 local Workspace = game:GetService("Workspace")
+local Debris = game:GetService("Debris")
+
 
 local Remotes = ReplicatedStorage.Remotes
 local PlayerReady = Remotes.PlayerReady
@@ -123,7 +126,7 @@ local positions = { posT.pos1, posT.pos2, posT.pos3, posT.pos4 }
 local function OnPlayerJoin(player: plr)
 	-- # LOCK PLAYER
 	player.CharacterAdded:Connect(setCollision)
-
+	--task.wait(2)
 	for _, pos in ipairs(positions) do
 		if pos:GetAttribute("Used") == true then
 			continue
@@ -139,12 +142,31 @@ local function OnPlayerJoin(player: plr)
 		repeat
 			task.wait(0.1)
 		until Character.Parent == game.Workspace
+		setCollision(Character)
+		local Humanoid = Character:WaitForChild("Humanoid")
+		local Animator = Humanoid:WaitForChild("Animator")
+		local Animation = ReplicatedFirst.Animations.SofaAnimations[pos.Name]
+		--Debris:AddItem(Animation, 60)
+		local tracks = Animator:GetPlayingAnimationTracks()
+		--for _, track in ipairs(tracks) do
+		--	track:Stop()
+		--end
+		local AnimationTrack = Animator:LoadAnimation(Animation) ::AnimationTrack
+		--AnimationTrack.Looped = true
+		AnimationTrack.Priority = Enum.AnimationPriority.Action
+		AnimationTrack:Play()
+
+		print(AnimationTrack.IsPlaying)
+
+		--AnimationTrack.Ended:Connect(function()
+		--	print("a")
+		--end)
+		print(AnimationTrack.Animation.AnimationId)
+		print(pos)
+		Animations:FireClient(player, {PosPart = pos, animationId = AnimationId}, { Looped = true })
 
 		Character:PivotTo(pos:GetPivot())
 		PrimaryPart.Anchored = true
-		setCollision(Character)
-
-		Animations:FireClient(player, AnimationId, { Looped = true })
 		return
 	end
 end
@@ -161,6 +183,16 @@ local function OnServerStart()
 	end)
 
 	PlayerReady.OnServerEvent:Connect(function(player)
+		local Character = player.Character 
+		local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
+		local Animator = Humanoid.Animator :: Animator
+
+		local tracks = Animator:GetPlayingAnimationTracks()
+
+		for i,v in pairs(tracks) do
+			v:Stop()
+		end
+
 		table.insert(ReadyPlayers, player)
 		if #ReadyPlayers == #Players:GetPlayers() then
 			OnServerReady()

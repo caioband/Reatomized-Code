@@ -76,8 +76,7 @@ Handler.Actions = {
 				end
 			end
 		end
-		local crouchTween =
-			TweenService:Create(Humanoid, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal)
+		local crouchTween = TweenService:Create(Humanoid, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal)
 		crouchTween:Play()
 		Handler.CrouchTweeStarted = true
 		crouchTween.Completed:Connect(function()
