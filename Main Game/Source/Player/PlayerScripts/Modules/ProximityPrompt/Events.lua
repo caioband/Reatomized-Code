@@ -1,13 +1,18 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ItemEvent = ReplicatedStorage.Remotes:WaitForChild("Item")
+local ItemEvent = ReplicatedStorage.Remotes:WaitForChild("Item") :: RemoteFunction
 local SoundService = game:GetService("SoundService")
 
 local Events: Events = {
 	["Pick-Up"] = function(self)
-		print("pick")
-		local object = self.Object
-		object:Destroy()
+		--print(self.Object.Name)
+		local ItemResponse = ItemEvent:InvokeServer(self.Object.Name)
+		--print(ItemResponse)
+		if not ItemResponse then return end 
 
+		local object = self.Object
+		
+		object:Destroy()
+	
 		--> Play sound
 		local folder = SoundService:WaitForChild("Pick-Up")
 		local children = folder:GetChildren()

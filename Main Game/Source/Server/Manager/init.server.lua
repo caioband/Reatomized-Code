@@ -106,6 +106,7 @@ local function OnServerReady()
 			teleport(player, BunkerSpawn)
 			Effects:FireClient(player, "FadeEffect", 0.5, 1)
 		end
+		
 		local Sound = workspace.Musics:WaitForChild("ReatomizedOst-LastMoments") :: Sound
 		if Sound.Playing then
 			Sound:Stop()

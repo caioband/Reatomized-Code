@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 local ZonePlus = require(ReplicatedStorage["[Rojo]"].Zone)
-
+local ItemsHandler = require(script.Parent.Parent.Items.Main)
 local BunkerZone = Workspace:WaitForChild("BunkerZone")
 
 local Bunker = {}
@@ -24,6 +24,11 @@ function Bunker:CreateZone()
 	local Zone = ZonePlus.new(BunkerZone)
 
 	Zone.playerEntered:Connect(function(player: Player)
+		for i,v in pairs(ItemsHandler.PlayerItems[player]) do
+			table.insert(ItemsHandler.BunkerTotalItems,v)
+		end
+		ItemsHandler.PlayerItems[player] = {}
+		print(ItemsHandler.BunkerTotalItems, ItemsHandler.PlayerItems[player])
 		self.OnPlayerEntered(player)
 	end)
 	Zone.playerExited:Connect(function(player: Player)

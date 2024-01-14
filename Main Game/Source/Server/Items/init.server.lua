@@ -1,5 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ItemEvent = ReplicatedStorage.Remotes:WaitForChild("Item") :: RemoteEvent
+local ItemEvent = ReplicatedStorage.Remotes:WaitForChild("Item") :: RemoteFunction
 local PlayerReady = ReplicatedStorage.Remotes:WaitForChild("PlayerReady") :: RemoteEvent
 local ItemHandler = require(script.Main)
 
@@ -7,7 +7,15 @@ local Sound = workspace.Musics:WaitForChild("ReatomizedOst-LastMoments") :: Soun
 Sound.Looped = true
 Sound:Play()
 
-ItemEvent.OnServerEvent:Connect(function(args) end)
+
+ItemEvent.OnServerInvoke = function(player, ItemName)
+    local CanGetItem = ItemHandler:ReceiveItem(player,ItemName)
+    return CanGetItem
+end
+--ItemEvent.OnServerEvent:Connect(function(Player,ItemName) 
+--    print(ItemName)
+--    ItemHandler:ReceiveItem(ItemName)
+--end)
 
 --game.Players.PlayerAdded:Connect(function(player)
 --    --if ItemHandler.ItemsLoaded then

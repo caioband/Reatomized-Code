@@ -16,7 +16,9 @@ local ProfileService = require(Modules.ProfileService)
 -- # ================================ MODULE ================================ #
 local DataService = {}
 DataService.Index = "Player_Save # 1.0.0"
-DataService.Template = {}
+DataService.Template = {
+	["Players"] = {},
+}
 DataService.ProfileStore = ProfileService.GetProfileStore(DataService.Index, DataService.Template)
 
 -- # ================================ PROFILE ================================ #

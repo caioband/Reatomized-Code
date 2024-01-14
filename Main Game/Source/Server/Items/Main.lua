@@ -5,6 +5,8 @@ local Workspace = game:GetService("Workspace")
 local PlayerReady = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("PlayerReady") :: RemoteEvent
 local Handler = {}
 Handler.ItemsLoaded = false
+Handler.PlayerItems = {}
+Handler.BunkerTotalItems = {}
 local Info = require(script.Parent.Info)
 
 function Handler:WillSpawn()
@@ -60,6 +62,26 @@ function Handler:SingleItemSpawnDecision(itemName): string
 			--print(decision, itemName)
 			return decision
 		end
+	end
+end
+
+function Handler:ReceiveItem(player,ItemName)
+	--print(Info.CFrameAttributeInfo[ItemName])
+	if Info.CFrameAttributeInfo[ItemName] ~= nil then
+		if self.PlayerItems[player] then 
+			if #self.PlayerItems[player] < 4 then
+				table.insert(self.PlayerItems[player], ItemName)
+				return true
+			else
+				return false
+			end
+		else
+			self.PlayerItems[player] = {}
+			table.insert(self.PlayerItems[player], ItemName)
+			return true
+		end
+		--self.Items[ItemName] = ItemName
+		--print(self.Items)
 	end
 end
 
