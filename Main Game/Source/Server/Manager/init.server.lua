@@ -58,7 +58,7 @@ local function OnServerReady()
 
 	-- # 60 SECONDS TIMER
 	task.spawn(function()
-		for _i = 1, 10 do
+		for _i = 1, 60 do
 			task.wait(1)
 			Text.Text = `{10 - _i}`
 
