@@ -7,7 +7,6 @@ local TeleportService = game:GetService("TeleportService")
 local Workspace = game:GetService("Workspace")
 local Debris = game:GetService("Debris")
 
-
 local Remotes = ReplicatedStorage.Remotes
 local PlayerReady = Remotes.PlayerReady
 local Effects = Remotes.Effects
@@ -22,6 +21,9 @@ local BunkerTimer = Workspace:WaitForChild("BunkerTimer")
 local Timer = BunkerTimer:WaitForChild("Timer")
 local Text = Timer:WaitForChild("Text")
 local Alarm = BunkerTimer:WaitForChild("Alarm") :: Sound
+
+local assets = ReplicatedStorage.Assets
+local playerGui = assets.playerGui
 
 local function MakePlayerReady(plr: plr)
 	local Character = plr.Character or plr.CharacterAdded:Wait()
@@ -112,6 +114,12 @@ local function OnServerReady()
 end
 
 local function setCollision(Char: Model)
+	local pGui = playerGui:Clone()
+	pGui.Parent = Char
+	pGui.nickname.Text = Players:GetPlayerFromCharacter(Char).DisplayName
+	pGui.Adornee = Char:WaitForChild("HumanoidRootPart")
+	pGui.PlayerToHideFrom = Players:GetPlayerFromCharacter(Char)
+
 	local desc = Char:GetDescendants()
 	for _i, v in ipairs(desc) do
 		if v:IsA("BasePart") then
@@ -142,30 +150,22 @@ local function OnPlayerJoin(player: plr)
 		repeat
 			task.wait(0.1)
 		until Character.Parent == game.Workspace
+
 		setCollision(Character)
+
 		local Humanoid = Character:WaitForChild("Humanoid")
 		local Animator = Humanoid:WaitForChild("Animator")
 		local Animation = ReplicatedFirst.Animations.SofaAnimations[pos.Name]
-		--Debris:AddItem(Animation, 60)
-		local tracks = Animator:GetPlayingAnimationTracks()
-		--for _, track in ipairs(tracks) do
-		--	track:Stop()
-		--end
-		local AnimationTrack = Animator:LoadAnimation(Animation) ::AnimationTrack
+
+		local AnimationTrack = Animator:LoadAnimation(Animation) :: AnimationTrack
 		--AnimationTrack.Looped = true
 		AnimationTrack.Priority = Enum.AnimationPriority.Action
 		AnimationTrack:Play()
 
-		print(AnimationTrack.IsPlaying)
-
-		--AnimationTrack.Ended:Connect(function()
-		--	print("a")
-		--end)
-		print(AnimationTrack.Animation.AnimationId)
-		print(pos)
-		Animations:FireClient(player, {PosPart = pos, animationId = AnimationId}, { Looped = true })
+		Animations:FireClient(player, Animation, { Looped = true })
 
 		Character:PivotTo(pos:GetPivot())
+
 		PrimaryPart.Anchored = true
 		return
 	end
@@ -183,13 +183,13 @@ local function OnServerStart()
 	end)
 
 	PlayerReady.OnServerEvent:Connect(function(player)
-		local Character = player.Character 
+		local Character = player.Character
 		local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
 		local Animator = Humanoid.Animator :: Animator
 
 		local tracks = Animator:GetPlayingAnimationTracks()
 
-		for i,v in pairs(tracks) do
+		for i, v in pairs(tracks) do
 			v:Stop()
 		end
 

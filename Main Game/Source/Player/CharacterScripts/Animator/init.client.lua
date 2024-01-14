@@ -11,25 +11,12 @@ local Character = Player.Character or Player.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local Animator = Humanoid:WaitForChild("Animator")
 
-ContentProvider:PreloadAsync(Animations,function(assetId)
-	print(ContentProvider:GetAssetFetchStatus(assetId))
-end)
+--ContentProvider:PreloadAsync(Animations, function(assetId)
+--	print(ContentProvider:GetAssetFetchStatus(assetId))
+--end)
 
-
-Remote.OnClientEvent:Connect(function(T : {[string]: any}, props: { [string]: any })
-	print(Remote,T.PosPart)
-	local Animation = ReplicatedFirst.Animations.SofaAnimations[T.PosPart.Name]
-	Animation.AnimationId = "rbxassetid://" .. T.animationId
-	--Animation.Parent = Character
-	--Animation.Name = "Starter-Animation"
-	--Debris:AddItem(Animation, 60)
-
-	--local tracks = Animator:GetPlayingAnimationTracks()
-	--for _, track in ipairs(tracks) do
-	--	track:Stop()
-	--end
-
-	local AnimationTrack = Animator:LoadAnimation(Animation) :: AnimationTrack
+Remote.OnClientEvent:Connect(function(animation: Animation, props: { [string]: any })
+	local AnimationTrack = Animator:LoadAnimation(animation) :: AnimationTrack
 	AnimationTrack.Priority = Enum.AnimationPriority.Action
 	for name, value in pairs(props) do
 		AnimationTrack[name] = value
@@ -37,5 +24,3 @@ Remote.OnClientEvent:Connect(function(T : {[string]: any}, props: { [string]: an
 	AnimationTrack:Play()
 	print(AnimationTrack.IsPlaying)
 end)
-
-
