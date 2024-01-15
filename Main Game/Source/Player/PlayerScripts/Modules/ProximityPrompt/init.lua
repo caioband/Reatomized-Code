@@ -83,5 +83,7 @@ function ProximityPromptHandler.Start()
 	end)
 end
 
-ProximityPromptHandler.Start()
+
+task.spawn(ProximityPromptHandler.Start())
+--ProximityPromptHandler.Start()
 return ProximityPromptHandler

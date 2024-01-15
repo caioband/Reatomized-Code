@@ -32,7 +32,6 @@ export type Module = {
 LoadModules()
 
 
-game.Players.PlayerAdded:Connect(function(player)
-	task.wait(2)
-	Storage.Inventory.OnPlayerJoin(player)
-end)
+--game.Players.PlayerAdded:Connect(function(player)
+--	Storage.Inventory.OnPlayerJoin(player)
+--end)

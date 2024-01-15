@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataStoreRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("DataService")
 
@@ -18,11 +19,16 @@ local function OnProfileLoad(Profile)
 end
 
 local function LoadModules()
-	for _index, Module in ipairs(script:GetChildren()) do
+	task.wait(1.5)
+	for _index, Module in ipairs(script:GetDescendants()) do
+		if not Module:IsA("ModuleScript") then continue end
+		print(1 , Module)
 		local module = require(Module)
 		Storage[Module.Name] = module
 	end
+	print("fr")
 	for _name, Module in pairs(Storage) do
+		print(Module)
 		if Module.OnRequire then
 			print(_name, "OnRequire")
 			task.spawn(function()
@@ -34,10 +40,12 @@ end
 
 -- # ================================ INITIALIZE ================================ #
 LoadModules()
-
+print(#Players.LocalPlayer.PlayerScripts["[Rojo]"].Modules:GetDescendants())
 -- # ================================ CONNECTIONS ================================ #
 DataStoreRemote.OnClientEvent:Connect(function(event: string, ...)
+	print("a")
 	if event == "Load" then
+		print("b")
 		OnProfileLoad(...)
 	end
 end)

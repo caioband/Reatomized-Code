@@ -1,16 +1,16 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 local TeleportService = game:GetService("TeleportService")
+local DataService = require(script.Parent.DataService)
 
 local InventoryHolder = {}
 
-local ProfileService = require(ReplicatedStorage["[Rojo]"].ProfileService)
+local ProfileService = require(ServerStorage["[Rojo]"].Modules.ProfileService)
 
 local InventoryService = {}
 
-local InventoryData = ProfileService.GetProfileStore("Inventory", {
-	["Players"] = {},
-})
+local ProfileStore = ProfileService.GetProfileStore(DataService.Index, DataService.Template)
 
 function InventoryService:LoadPlayerInventory(plr: Player, inv: Inventory)
 	local slots = { inv["Slot1"], inv["Slot2"], inv["Slot3"], inv["Slot4"] }
@@ -19,8 +19,8 @@ end
 function InventoryService.OnPlayerJoin(player: Player)
 	local joinData = player:GetJoinData()
 	local teleportData = joinData.TeleportData
+	local HostPlayer = Players:GetPlayerByUserId(teleportData.Host) :: Instance
 	
-	print(joinData, teleportData, teleportData.Host)
 	--for i,v in pairs(teleportData) do
 	--	print(i,v)
 	--end
@@ -34,22 +34,24 @@ function InventoryService.OnPlayerJoin(player: Player)
 		return
 	end
 
-	local Profile = InventoryData:LoadProfileAsync(player.UserId, "ForceLoad")
+	local Profile = ProfileStore:LoadProfileAsync(`{player.UserId}`, "ForceLoad")
 	if Profile ~= nil then
 		Profile:AddUserId(player.UserId)
 		Profile:Reconcile()
 		Profile:ListenToRelease(function()
 			InventoryHolder[player] = nil
-			player:Kick()
+			warn("1")
+			--player:Kick()
 		end)
 		if player:IsDescendantOf(Players) == true then
 			InventoryHolder[player] = Profile
-			InventoryService.RemoteEvents.Load:FireClient(player, Profile.Data)
+			ReplicatedStorage.Remotes.DataService:FireClient(player, Profile.Data)
 		else
 			Profile:Release()
 		end
 	else
-		player:Kick()
+		warn("2")
+		--player:Kick()
 	end
 end
 
@@ -61,8 +63,8 @@ function InventoryService.OnPlayerLeaving(player)
 	end
 end
 
-Players.PlayerAdded:Connect(InventoryService.OnPlayerJoin)
-Players.PlayerRemoving:Connect(InventoryService.OnPlayerLeaving)
+--Players.PlayerAdded:Connect(InventoryService.OnPlayerJoin)
+--Players.PlayerRemoving:Connect(InventoryService.OnPlayerLeaving)
 
 export type Inventory = {
 	[string]: any,
