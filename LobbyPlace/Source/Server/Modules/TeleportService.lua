@@ -4,10 +4,13 @@ local TpService = game:GetService("TeleportService")
 local PartyService: { GetParty: (player: Player) -> {} } = nil
 
 local Places = {
-	["Game"] = 15189343458,
+	["Game"] = 15452317848,
 	["Lobby"] = 15922022852,
 	["Menu"] = 15189343458,
 }
+
+
+
 
 function TeleportService:TeleportTo(name: Places, player: Player)
 	local placeId = Places[name]
@@ -21,9 +24,14 @@ function TeleportService:TeleportTo(name: Places, player: Player)
 		Members = Party.Members
 	end
 
-	TpService:TeleportPartyAsync(placeId, Members or { player })
+	local TeleportData = {
+		["Host"] = player
+	}
+
+	TpService:TeleportPartyAsync(placeId, Members or { player },TeleportData)
 end
-function TeleportService.OnRequire(self, storage: {})
+
+function TeleportService.OnRequire(storage: {})
 	PartyService = storage.PartyService
 end
 

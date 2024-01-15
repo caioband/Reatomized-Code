@@ -98,7 +98,7 @@ function PartyService:Invite(inviter: Player, player: Player): Invite
 	local id = `{inviter.UserId}_{player.UserId}`
 
 	local invite = Invite.new(id, inviter, player)
-	invite:Notify(player, `You have been invited to a party of ${inviter.Name}`)
+	--invite:Notify(player, `You have been invited to a party of ${inviter.Name}`)
 
 	return invite
 end
@@ -110,7 +110,7 @@ function PartyService:Accept(inviter: Player, player: Player): Party
 	end
 
 	party:Add(player)
-	Invites[inviter]:Accept()
+	--Invites[inviter]:Accept()
 
 	return party
 end
@@ -118,6 +118,7 @@ end
 function PartyService:GetParty(player: Player): Party
 	return self.Parties[player]
 end
+
 
 function PartyService:Refuse(inviter: Player, player: Player): Party
 	local party = self.Parties[inviter]
