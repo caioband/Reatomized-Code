@@ -25,10 +25,14 @@ function TeleportService:TeleportTo(name: Places, player: Player)
 	end
 
 	local TeleportData = {
-		["Host"] = player
+		["Host"] = player.UserId
 	}
+	local TeleportOptions = Instance.new("TeleportOptions") :: TeleportOptions
+	TeleportOptions.ShouldReserveServer = true
+	TeleportOptions:SetTeleportData(TeleportData)
+	print(TeleportData.Host)
 
-	TpService:TeleportPartyAsync(placeId, Members or { player },TeleportData)
+	TpService:TeleportPartyAsync(placeId, Members or {player}, TeleportData)
 end
 
 function TeleportService.OnRequire(storage: {})

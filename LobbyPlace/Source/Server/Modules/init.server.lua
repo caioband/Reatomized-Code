@@ -49,21 +49,25 @@ LoadModules()
 --print(Storage)
 
 game.Players.PlayerAdded:Connect(function(player)
-	if #game.Players:GetPlayers() > 1 then
-		local TheOtherPlayer = GetTheOtherPlayer(player)
-		print(Storage.PartyService)
-		print(TheOtherPlayer.Name)
-		Storage.PartyService:Invite(TheOtherPlayer,player)
-		Storage.PartyService:Accept(TheOtherPlayer,player)
-
-		local Party = Storage.PartyService:GetParty(TheOtherPlayer)
-		print(Party)
-		Storage.TeleportService.OnRequire(Storage)
-		Storage.TeleportService:TeleportTo("Game",TheOtherPlayer)
-	else
-		print(#game.Players:GetPlayers())
-		Storage.PartyService:CreateParty({player}, player)
-		local Party = Storage.PartyService:GetParty(player)
-		print(Party)
-	end
+	--if #game.Players:GetPlayers() > 1 then
+	--	local TheOtherPlayer = GetTheOtherPlayer(player)
+	--	print(Storage.PartyService)
+	--	print(TheOtherPlayer.Name)
+	--	Storage.PartyService:Invite(TheOtherPlayer,player)
+	--	Storage.PartyService:Accept(TheOtherPlayer,player)
+--
+	--	local Party = Storage.PartyService:GetParty(TheOtherPlayer)
+	--	print(Party)
+	--	Storage.TeleportService.OnRequire(Storage)
+	--	Storage.TeleportService:TeleportTo("Game",TheOtherPlayer)
+	--else
+	--	print(#game.Players:GetPlayers())
+	--	Storage.PartyService:CreateParty({player}, player)
+	--	local Party = Storage.PartyService:GetParty(player)
+	--	print(Party)
+	--end
+	Storage.PartyService:CreateParty({player}, player)
+	local Party = Storage.PartyService:GetParty(player)
+	Storage.TeleportService.OnRequire(Storage)
+	Storage.TeleportService:TeleportTo("Game",player)
 end)

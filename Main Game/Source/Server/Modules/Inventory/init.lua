@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TeleportService = game:GetService("TeleportService")
 
 local InventoryHolder = {}
 
@@ -18,6 +19,11 @@ end
 function InventoryService.OnPlayerJoin(player: Player)
 	local joinData = player:GetJoinData()
 	local teleportData = joinData.TeleportData
+	
+	print(joinData, teleportData, teleportData.Host)
+	--for i,v in pairs(teleportData) do
+	--	print(i,v)
+	--end
 
 	local host = teleportData.Host :: number
 	Players:SetAttribute("Host", host)

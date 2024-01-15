@@ -30,3 +30,9 @@ export type Module = {
 }
 
 LoadModules()
+
+
+game.Players.PlayerAdded:Connect(function(player)
+	task.wait(2)
+	Storage.Inventory.OnPlayerJoin(player)
+end)
