@@ -22,7 +22,6 @@ function Handler:WillSpawn()
 		Weight += rarity
 
 		if randomNum <= Weight then
-			--print(decision, itemName)
 			return decision
 		end
 	end
@@ -36,7 +35,6 @@ function Handler:GetItemsInfoWeight()
 		end
 		w += rarity
 	end
-	--print(w)
 	return w
 end
 
@@ -59,16 +57,14 @@ function Handler:SingleItemSpawnDecision(itemName): string
 		Weight += rarity
 
 		if randomNum <= Weight then
-			--print(decision, itemName)
 			return decision
 		end
 	end
 end
 
-function Handler:ReceiveItem(player,ItemName)
-	--print(Info.CFrameAttributeInfo[ItemName])
+function Handler:ReceiveItem(player, ItemName)
 	if Info.CFrameAttributeInfo[ItemName] ~= nil then
-		if self.PlayerItems[player] then 
+		if self.PlayerItems[player] then
 			if #self.PlayerItems[player] < 4 then
 				table.insert(self.PlayerItems[player], ItemName)
 				return true
@@ -80,15 +76,11 @@ function Handler:ReceiveItem(player,ItemName)
 			table.insert(self.PlayerItems[player], ItemName)
 			return true
 		end
-		--self.Items[ItemName] = ItemName
-		--print(self.Items)
 	end
 end
 
 function Handler:SetItemToPartPos(Part: BasePart, ItemName): nil
 	if ReplicatedStorage.HouseItems:FindFirstChild(ItemName) ~= nil then
-		--print("a")
-		--if not Info.CFrameAttributeInfo[ItemName] or Part:GetAttribute(Info.CFrameAttributeInfo[ItemName]) then return end
 		local CloneModel = ReplicatedStorage.HouseItems:FindFirstChild(ItemName):Clone() :: Instance
 		CloneModel.Parent = workspace.HouseItemsSpawned
 
@@ -105,11 +97,9 @@ function Handler:SetItemToPartPos(Part: BasePart, ItemName): nil
 			CloneModel.Anchored = true
 		end
 		if Info.CFrameAttributeInfo[ItemName] and Part:GetAttribute(Info.CFrameAttributeInfo[ItemName]) then
-			--print("b")
 			local CFrameMultiplier = Part:GetAttribute(Info.CFrameAttributeInfo[ItemName])
 			CloneModel:PivotTo(Part.CFrame * CFrameMultiplier)
 		else
-			--print("c")
 			CloneModel:Destroy()
 			return
 		end

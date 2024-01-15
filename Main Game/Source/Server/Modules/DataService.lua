@@ -27,25 +27,22 @@ local Profile_Global = require(ReplicatedStorage["[Rojo]"].Profiles)
 
 ---@diagnostic disable-next-line: undefined-type
 function DataService:LoadProfile(player: Player): Profile_Global.Profile
-	
+	--[[
 	if not RunService:IsStudio() then
 		local joinData = player:GetJoinData()
 		local teleportData = joinData.TeleportData
 		local HostPlayer = Players:GetPlayerByUserId(teleportData.Host) :: Instance
-		
-		--for i,v in pairs(teleportData) do
-		--	print(i,v)
-		--end
-		
+
 		local host = teleportData.Host :: number
 		Players:SetAttribute("Host", host)
-		
+
 		local isHost = player.UserId == host
-		
+
 		if isHost == false then
 			return
 		end
 	end
+	--]]
 
 	if Profiles[player] then
 		return Profiles[player]
@@ -60,12 +57,7 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 			Profiles[player] = nil
 			player:Kick()
 		end)
-		print(Players:GetPlayers())
-		for i,v in pairs(Players:GetPlayers()) do
-			print(v)
-		end
 		if player:IsDescendantOf(Players) == true then
-			print(player)
 			Profiles[player] = profile
 			Profile_Global[player] = profile
 			DataServiceRemote:FireClient(player)
@@ -94,7 +86,7 @@ end
 for _, player in ipairs(Players:GetPlayers()) do
 	task.spawn(DataService.PlayerAdded, player)
 end
- --# ================================ EVENTS ================================ #
+--# ================================ EVENTS ================================ #
 Players.PlayerAdded:Connect(DataService.PlayerAdded)
 Players.PlayerRemoving:Connect(DataService.PlayerLeaving)
 

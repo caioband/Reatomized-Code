@@ -151,17 +151,14 @@ function Handler:CreateNewCamera(CameraMode: string)
 end
 
 function Handler:Reset()
-	--print("a")
 	if self.RenderStepped then
 		RunService:UnbindFromRenderStep(self.RenderStepped)
-		print(self.RenderStepped)
 	end
 	Player.CameraMode = Enum.CameraMode.Classic
 	self.FirstPerson.Activated = false
 end
 
 CameraRemote.OnClientEvent:Connect(function(event: string)
-	--print("recebeu")
 	if event == "Enable" then
 		Handler:CreateNewCamera("FirstPerson")
 	elseif event == "Disable" then

@@ -51,7 +51,6 @@ local function FootstepLoop()
 			Vector3.new(0, -4, 0) * (Character.Humanoid.HipHeight + 1),
 			castParams
 		)
-		--print(cast)
 		if cast then
 			if
 				HumanoidStateType == Enum.HumanoidStateType.Jumping
@@ -72,7 +71,6 @@ local function FootstepLoop()
 			--end
 
 			if soundOveride then
-				--print(soundOveride)
 				local soundTable: table = FOOTSTEPS.Raw[soundOveride]:GetChildren()
 
 				local newNum = math.random(#soundTable)
@@ -108,7 +106,7 @@ local function FootstepLoop()
 end
 
 function Handler:Start()
-	task.wait(.1)
+	task.wait(0.1)
 	for i, v in pairs(Character:WaitForChild("HumanoidRootPart"):GetChildren()) do
 		if v:IsA("Sound") then
 			v:Destroy()

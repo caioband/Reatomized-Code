@@ -3,6 +3,7 @@ local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
 local Workspace = game:GetService("Workspace")
 local Debris = game:GetService("Debris")
@@ -58,11 +59,16 @@ local function OnServerReady()
 
 	-- # 60 SECONDS TIMER
 	task.spawn(function()
-		for _i = 1, 60 do
-			task.wait(1)
-			Text.Text = `{10 - _i}`
+		local Time = 60
+		if RunService:IsStudio() then
+			Time = 10
+		end
 
-			if _i == 15 then
+		for _i = 1, Time do
+			task.wait(1)
+			Text.Text = `{Time - _i}`
+
+			if _i == math.floor(Time / 4) then
 				Alarm:Play()
 			end
 		end
@@ -106,7 +112,7 @@ local function OnServerReady()
 			teleport(player, BunkerSpawn)
 			Effects:FireClient(player, "FadeEffect", 0.5, 1)
 		end
-		
+
 		local Sound = workspace.Musics:WaitForChild("ReatomizedOst-LastMoments") :: Sound
 		if Sound.Playing then
 			Sound:Stop()
@@ -179,7 +185,6 @@ local function OnServerStart()
 	task.delay(60, function()
 		if #ReadyPlayers < (#Players:GetPlayers()) then
 			OnServerReady()
-			print("Starting with the current players...")
 		end
 	end)
 

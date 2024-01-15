@@ -1,3 +1,5 @@
 {
-	"cSpell.words": ["rbxassetid"]
+	"cSpell.enabled": false,
+	"editor.bracketPairColorization.enabled": true,
+	"github.copilot.editor.enableAutoCompletions": true
 }

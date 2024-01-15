@@ -67,12 +67,16 @@ function Prompt.new(ProximityPrompt: ProximityPrompt)
 	return self
 end
 
-function ProximityPromptHandler.Start()
-	Players:GetAttributeChangedSignal("HouseItemLoad"):Wait()
+function ProximityPromptHandler.OnRequire()
+	local atr = Players:GetAttribute("HouseItemLoad")
+	if not atr then
+		repeat
+			atr = Players:GetAttributeChangedSignal("HouseItemLoad"):Wait()
+		until atr ~= nil
+	end
 
 	local prompts = CollectionService:GetTagged("Prompt")
 
-	print(#CollectionService:GetTagged("Prompt"), #workspace:WaitForChild("HouseItemsSpawned"):GetChildren())
 	for _, prompt: ProximityPrompt in ipairs(prompts) do
 		Prompt.new(prompt)
 	end
@@ -83,7 +87,4 @@ function ProximityPromptHandler.Start()
 	end)
 end
 
-
-task.spawn(ProximityPromptHandler.Start())
---ProximityPromptHandler.Start()
 return ProximityPromptHandler

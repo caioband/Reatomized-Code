@@ -7,20 +7,9 @@ local Sound = workspace.Musics:WaitForChild("ReatomizedOst-LastMoments") :: Soun
 Sound.Looped = true
 Sound:Play()
 
-
 ItemEvent.OnServerInvoke = function(player, ItemName)
-    local CanGetItem = ItemHandler:ReceiveItem(player,ItemName)
-    return CanGetItem
+	local CanGetItem = ItemHandler:ReceiveItem(player, ItemName)
+	return CanGetItem
 end
---ItemEvent.OnServerEvent:Connect(function(Player,ItemName) 
---    print(ItemName)
---    ItemHandler:ReceiveItem(ItemName)
---end)
-
---game.Players.PlayerAdded:Connect(function(player)
---    --if ItemHandler.ItemsLoaded then
---    --    PlayerReady:FireClient(player)
---    --end
---end)
 
 ItemHandler:RenderObjects()

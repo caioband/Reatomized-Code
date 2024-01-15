@@ -11,9 +11,7 @@ local Character = Player.Character or Player.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local Animator = Humanoid:WaitForChild("Animator")
 
-ContentProvider:PreloadAsync(Animations, function(assetId)
-	--print(ContentProvider:GetAssetFetchStatus(assetId))
-end)
+ContentProvider:PreloadAsync(Animations, function(assetId) end)
 
 Remote.OnClientEvent:Connect(function(animation: Animation, props: { [string]: any })
 	local AnimationTrack = Animator:LoadAnimation(animation) :: AnimationTrack
@@ -22,5 +20,4 @@ Remote.OnClientEvent:Connect(function(animation: Animation, props: { [string]: a
 		AnimationTrack[name] = value
 	end
 	AnimationTrack:Play()
-	--print(AnimationTrack.IsPlaying)
 end)

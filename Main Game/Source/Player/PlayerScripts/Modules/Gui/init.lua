@@ -120,7 +120,6 @@ function GuiHandler:FadeEffect(Time: number, Transparency: number)
 end
 
 function GuiHandler:Init()
-	print("a")
 	PlayerGui:WaitForChild("Ready"):WaitForChild("Freeze").Enabled = true
 
 	Effects.OnClientEvent:Connect(function(event: string, ...)
@@ -139,14 +138,12 @@ function GuiHandler:Init()
 			GuiButtonObjectStore[object.Name] = GuiButtonObject.new(object)
 		end
 	end)
-	print("b")
 end
 
 function GuiHandler.OnRequire(self, str: {})
 	Storage = str
 
 	PlayerReady.OnClientEvent:Once(function()
-		print("Game Ready")
 		Events["Game-Ready"](GuiButtonObjectStore["Game-Ready"], Storage)
 	end)
 end

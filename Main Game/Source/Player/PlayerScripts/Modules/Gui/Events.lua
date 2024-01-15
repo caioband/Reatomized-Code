@@ -15,11 +15,9 @@ local Events: Events = {
 		GuiButtonObject.Object:FindFirstAncestorWhichIsA("ScreenGui").Enabled = false
 		local tracks = Animator:GetPlayingAnimationTracks()
 
-		for i,v in pairs(tracks) do
+		for i, v in pairs(tracks) do
 			v:Stop()
 		end
-
-		print("Player is ready...")
 
 		Storage.Realism:LockFirstPerson()
 	end,
