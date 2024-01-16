@@ -13,7 +13,7 @@
 			"StarterPlayerScripts": {
 				"[Rojo]": {
 					"$className": "Folder",
-					"$path": "Source/Player/Player"
+					"$path": "Source/Player/PlayerScripts"
 				}
 			}
 		},

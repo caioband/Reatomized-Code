@@ -47,7 +47,7 @@ function Invite.new(id: number, inviter: Player, invited: Player): Invite
 
 	Invites[id] = self
 
-	if inviter == invited then
+	if not inviter == invited then
 		return error("Inviter and Invited can't be the same player")
 	end
 
@@ -85,26 +85,26 @@ end
 -- # ================================ PARTY SERVICE ================================ #
 function PartyService:CreateParty(members: { Player }, leader: Player): number
 	local party = Party.new(members, leader)
-	self.Parties[leader] = party
+	self.Parties[leader.UserId] = party
 	return party
 end
 
 function PartyService:RemoveParty(leader: Player): boolean
-	self.Parties[leader] = nil
-	return self.Parties[leader] == nil
+	self.Parties[leader.UserId] = nil
+	return self.Parties[leader.UserId] == nil
 end
 
 function PartyService:Invite(inviter: Player, player: Player): Invite
 	local id = `{inviter.UserId}_{player.UserId}`
 
 	local invite = Invite.new(id, inviter, player)
-	--invite:Notify(player, `You have been invited to a party of ${inviter.Name}`)
+	invite:Notify(player, `You have been invited to a party by {inviter.Name}`)
 
 	return invite
 end
 
 function PartyService:Accept(inviter: Player, player: Player): Party
-	local party = self.Parties[inviter]
+	local party = self.Parties[inviter.UserId]
 	if party == nil then
 		return error("Party not found")
 	end
@@ -116,17 +116,20 @@ function PartyService:Accept(inviter: Player, player: Player): Party
 end
 
 function PartyService:GetParty(player: Player): Party
-	return self.Parties[player]
+	return self.Parties[player.UserId]
 end
 
-
 function PartyService:Refuse(inviter: Player, player: Player): Party
-	local party = self.Parties[inviter]
+	local party = self.Parties[inviter.UserId]
 	if party == nil then
 		return error("Party not found")
 	end
+	local invite = Invites[`{inviter.UserId}_}{player.UserId}`]
+	if not invite then
+		return error("Invite not found")
+	end
 
-	Invites[inviter]:Refuse()
+	invite:Refuse()
 
 	return party
 end
@@ -134,7 +137,50 @@ end
 -- # ================================ PARTY SERVICE ================================ #
 
 -- # ================================ REQUIRE ================================ #
-function PartyService.OnRequire(module, Storage: {}) end
+function PartyService.OnRequire(module, Storage: {})
+	PartyServiceRemote.OnServerEvent:Connect(function(Player, BindTo, ...)
+		if BindTo == "Invite" then
+			local params = ...
+			local Inviter = Player
+			local Invited = params.Player
+
+			if PartyService:GetParty(Player) == nil then
+				PartyService:CreateParty({ Player }, Player)
+			end
+			PartyService:Invite(Inviter, Invited)
+		end
+		if BindTo == "Accept" then
+			local params = ...
+			local Inviter = params.Inviter
+			local InviteId = params.Data.Id
+
+			PartyService:Accept(Inviter, Player)
+		end
+		if BindTo == "Refuse" then
+			local params = ...
+			local Inviter = params.Inviter
+			local InviteId = params.Data.Id
+
+			PartyService:Refuse(Inviter, Player)
+		end
+		if BindTo == "Decision" then
+			local params: { Data: {
+				Inviter: Player,
+				Invited: Player,
+				Id: number,
+			}, Response: string } =
+				...
+
+			print(params.Data)
+			print(PartyService.Parties)
+			if params.Response == "true" then
+				PartyService:Accept(params.Data.Inviter, params.Data.Invited)
+			else
+				PartyService:Refuse(params.Data.Inviter, params.Data.Invited)
+			end
+		end
+	end)
+end
 -- # ================================ REQUIRE ================================ #
 
 -- # ================================ EXPORT ================================ #
