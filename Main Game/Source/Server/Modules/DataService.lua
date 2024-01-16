@@ -15,9 +15,21 @@ local ProfileService = require(Modules.ProfileService)
 
 -- # ================================ MODULE ================================ #
 local DataService = {}
-DataService.Index = "Player_Save # 1.0.0"
-DataService.Template = {
+DataService.Index = "Player_Save # 0.0.8"
+
+DataService.SaveTemplate = {
 	["Players"] = {},
+	["Bunker"] = {},
+	["PrologueCompleted"] = false,
+}
+
+DataService.Template = {
+	["Saves"] = {
+		["Slot1"] = DataService.SaveTemplate,
+		["Slot2"] = DataService.SaveTemplate,
+		["Slot3"] = DataService.SaveTemplate,
+		["Slot4"] = DataService.SaveTemplate,
+	}
 }
 DataService.ProfileStore = ProfileService.GetProfileStore(DataService.Index, DataService.Template)
 
@@ -26,23 +38,30 @@ local Profiles = {}
 local Profile_Global = require(ReplicatedStorage["[Rojo]"].Profiles)
 
 ---@diagnostic disable-next-line: undefined-type
+
+
 function DataService:LoadProfile(player: Player): Profile_Global.Profile
-	--[[
+
 	if not RunService:IsStudio() then
 		local joinData = player:GetJoinData()
 		local teleportData = joinData.TeleportData
 		local HostPlayer = Players:GetPlayerByUserId(teleportData.Host) :: Instance
 
+
 		local host = teleportData.Host :: number
 		Players:SetAttribute("Host", host)
-
+		Players:SetAttribute("SaveSlot", teleportData.Host)
 		local isHost = player.UserId == host
 
 		if isHost == false then
 			return
 		end
+	else
+		Players:SetAttribute("Host", player.UserId)
+		Players:SetAttribute("SaveSlot", "Slot1")
 	end
-	--]]
+
+
 
 	if Profiles[player] then
 		return Profiles[player]
@@ -60,6 +79,7 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 		if player:IsDescendantOf(Players) == true then
 			Profiles[player] = profile
 			Profile_Global[player] = profile
+			Players:SetAttribute("ServerDataLoaded", true)
 			DataServiceRemote:FireClient(player)
 		else
 			profile:Release()
@@ -70,6 +90,43 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 		player:Kick()
 	end
 end
+
+function DataService:GetPlayerGeneralData()
+	
+end
+
+function DataService:GetCurrentSlot()
+	repeat
+		task.wait()
+	until Players:GetAttribute("SaveSlot") ~= nil
+	return Players:GetAttribute("SaveSlot")
+end
+
+function DataService:GetPlayerInGameData(player)
+	--if player and Profile_Global[player] then
+	--	return Profile_Global[player].Data
+	--else
+	--	warn(`Unable to load {player.Name}'s data`)
+	--end
+end
+
+function DataService:GetServerData()
+	repeat
+		task.wait()
+	until Players:GetAttribute("ServerDataLoaded") ~= nil
+
+	local Host = Players:GetAttribute("Host")
+	local player = Players:GetPlayerByUserId(Host)
+	local CurrentSlot = self:GetCurrentSlot()
+	if player and Profile_Global[player] then
+		--print(Profile_Global[player].Data.Saves[CurrentSlot])
+		return Profile_Global[player].Data.Saves[CurrentSlot]
+	else
+		warn(`Unable to load Server data`)
+		return false
+	end
+end
+
 
 function DataService.PlayerAdded(player)
 	DataService:LoadProfile(player)

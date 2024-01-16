@@ -7,7 +7,6 @@ local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
 local Workspace = game:GetService("Workspace")
 local Debris = game:GetService("Debris")
-
 local Remotes = ReplicatedStorage.Remotes
 local PlayerReady = Remotes.PlayerReady
 local Effects = Remotes.Effects
@@ -16,6 +15,8 @@ local Camera = Remotes.Camera
 
 local ServerReady = false
 
+local DataService = require(script.Parent.Modules.DataService)
+local ServerData = DataService:GetServerData()
 local Bunker = require(script:WaitForChild("Bunker"))
 
 local BunkerTimer = Workspace:WaitForChild("BunkerTimer")
@@ -26,12 +27,12 @@ local Alarm = BunkerTimer:WaitForChild("Alarm") :: Sound
 local assets = ReplicatedStorage.Assets
 local playerGui = assets.playerGui
 
-local function MakePlayerReady(plr: plr)
-	local Character = plr.Character or plr.CharacterAdded:Wait()
+local function MakePlayerReady(Player: Player)
+	local Character = Player.Character or Player.CharacterAdded:Wait()
 	local Humanoid = Character:WaitForChild("Humanoid")
 	local PrimaryPart = Character:WaitForChild("HumanoidRootPart")
 
-	PlayerReady:FireClient(plr)
+	PlayerReady:FireClient(Player)
 
 	-- # LOCK PLAYER
 	PrimaryPart.Anchored = false
@@ -41,7 +42,8 @@ end
 local function teleport(from: Player, to: BasePart)
 	Camera:FireClient(from, "Disable")
 	local char = from.Character or from.CharacterAdded:Wait()
-	char:PivotTo(to:GetPivot())
+	print("b")
+	char.HumanoidRootPart.CFrame = to.CFrame
 	task.delay(1.5, function()
 		Camera:FireClient(from, "Enable")
 	end)
@@ -53,9 +55,13 @@ local function OnServerReady()
 	end
 	ServerReady = true
 
-	for _i, plr: plr in ipairs(Players:GetPlayers()) do
-		MakePlayerReady(plr)
+	for _i, Player: Player in ipairs(Players:GetPlayers()) do
+		MakePlayerReady(Player)
 	end
+
+	local Sound = workspace.Musics:WaitForChild("ReatomizedOst-LastMoments") :: Sound
+	Sound.Looped = true
+	Sound:Play()
 
 	-- # 60 SECONDS TIMER
 	task.spawn(function()
@@ -86,11 +92,11 @@ local function OnServerReady()
 		-- # TELEPORT TO INSIDE
 		for _i, player: Player in ipairs(saved) do
 			local char = player.Character or player.CharacterAdded:Wait()
-			char.PrimaryPart.Anchored = true
-
+			char.HumanoidRootPart.Anchored = true
 			teleport(player, BunkerZone)
 		end
-
+		local ServerData = DataService:GetServerData() :: ServerData
+		ServerData.PrologueCompleted = true
 		task.wait(0.5)
 		-- # CLOSE THE DOOR
 
@@ -108,10 +114,13 @@ local function OnServerReady()
 		-- # TELEPORT TO BUNKER
 		for _i, player: Player in ipairs(saved) do
 			local char = player.Character or player.CharacterAdded:Wait()
-			char.PrimaryPart.Anchored = false
+			char.HumanoidRootPart.Anchored = false
+			print("a")
 			teleport(player, BunkerSpawn)
 			Effects:FireClient(player, "FadeEffect", 0.5, 1)
 		end
+
+		
 
 		local Sound = workspace.Musics:WaitForChild("ReatomizedOst-LastMoments") :: Sound
 		if Sound.Playing then
@@ -138,7 +147,7 @@ end
 local posT = Workspace.YourHouse["Sofa Positions"]
 local positions = { posT.pos1, posT.pos2, posT.pos3, posT.pos4 }
 
-local function OnPlayerJoin(player: plr)
+local function OnPlayerJoin(player: Player)
 	-- # LOCK PLAYER
 	player.CharacterAdded:Connect(setCollision)
 	--task.wait(2)
@@ -206,7 +215,21 @@ local function OnServerStart()
 	end)
 end
 
-OnServerStart()
+if not ServerData.PrologueCompleted then
+	OnServerStart()
+else
+	local BunkerEntrance = Workspace:WaitForChild("BunkerSpawn")
 
-type plr = Player
+	for i,v in pairs(Players:GetPlayers()) do 
+		teleport(v, BunkerEntrance)	
+	end
+end
+
+
+type ServerData = {
+	["Players"]: {},
+	["Bunker"]: {},
+	["PrologueCompleted"]: boolean
+}
+
 Players.PlayerAdded:Connect(OnPlayerJoin)

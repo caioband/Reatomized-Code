@@ -1,5 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage.Remotes
+local Comms = Remotes:WaitForChild("Comms") :: RemoteFunction
 --local ProximityPrompt = require(script.Parent.ProximityPrompt)
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
@@ -120,7 +122,11 @@ function GuiHandler:FadeEffect(Time: number, Transparency: number)
 end
 
 function GuiHandler:Init()
-	PlayerGui:WaitForChild("Ready"):WaitForChild("Freeze").Enabled = true
+		local Response = Comms:InvokeServer("GetServerData")
+		print(Response)
+		if not Response.PrologueCompleted then
+			PlayerGui:WaitForChild("Ready"):WaitForChild("Freeze").Enabled = true
+		end
 
 	Effects.OnClientEvent:Connect(function(event: string, ...)
 		if event == "FadeEffect" then
@@ -144,7 +150,6 @@ function GuiHandler.OnRequire(self, str: {})
 	Storage = str
 
 	PlayerReady.OnClientEvent:Once(function()
-		Events["Game-Ready"](GuiButtonObjectStore["Game-Ready"], Storage)
 	end)
 end
 
