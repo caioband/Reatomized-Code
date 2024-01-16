@@ -17,7 +17,6 @@ local function OnProfileLoad(Profile)
 end
 
 local function LoadModules()
-	task.wait(1.5)
 	for _index, Module in ipairs(script:GetDescendants()) do
 		if not Module:IsA("ModuleScript") then
 			continue
