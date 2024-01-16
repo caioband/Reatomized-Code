@@ -29,7 +29,7 @@ DataService.Template = {
 		["Slot2"] = DataService.SaveTemplate,
 		["Slot3"] = DataService.SaveTemplate,
 		["Slot4"] = DataService.SaveTemplate,
-	}
+	},
 }
 DataService.ProfileStore = ProfileService.GetProfileStore(DataService.Index, DataService.Template)
 
@@ -37,16 +37,14 @@ DataService.ProfileStore = ProfileService.GetProfileStore(DataService.Index, Dat
 local Profiles = {}
 local Profile_Global = require(ReplicatedStorage["[Rojo]"].Profiles)
 
----@diagnostic disable-next-line: undefined-type
-
-
 function DataService:LoadProfile(player: Player): Profile_Global.Profile
+	local IsStudio = RunService:IsStudio() == true
+	Players:SetAttribute("IsStudio", IsStudio)
 
 	if not RunService:IsStudio() then
 		local joinData = player:GetJoinData()
 		local teleportData = joinData.TeleportData
 		local HostPlayer = Players:GetPlayerByUserId(teleportData.Host) :: Instance
-
 
 		local host = teleportData.Host :: number
 		Players:SetAttribute("Host", host)
@@ -60,8 +58,6 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 		Players:SetAttribute("Host", player.UserId)
 		Players:SetAttribute("SaveSlot", "Slot1")
 	end
-
-
 
 	if Profiles[player] then
 		return Profiles[player]
@@ -91,9 +87,7 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 	end
 end
 
-function DataService:GetPlayerGeneralData()
-	
-end
+function DataService:GetPlayerGeneralData() end
 
 function DataService:GetCurrentSlot()
 	repeat
@@ -126,7 +120,6 @@ function DataService:GetServerData()
 		return false
 	end
 end
-
 
 function DataService.PlayerAdded(player)
 	DataService:LoadProfile(player)
