@@ -2,10 +2,9 @@ local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
+local Workspace = game:GetService("Workspace")
 local Handler = {}
 local Player = game.Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
-local ControllerHandler = require(Character:WaitForChild("[Rojo]").Controller.Handler)
 
 -- Consts --
 local SPEED_GATE = 2
@@ -17,8 +16,33 @@ local FOOTSTEPS: Folder = ReplicatedStorage:WaitForChild("Footsteps")
 
 local SKIN_VECTOR = Vector3.new(0.1, 0, 0.1)
 local DELAY_UPPER = (0.1 * (SPEED_MAXIMUM / 17.5)) * (SPEED_MAXIMUM / SPEED_GATE)
-
+local CharInfo = Player.Character or Player.CharacterAdded:Wait()
+local ControllerHandler = require(CharInfo:WaitForChild("[Rojo]").Controller.Handler)
 -- Vars --
+
+local TerrainMaterialConversion = {
+	[Enum.Material.Grass] = "Grass",
+	[Enum.Material.Asphalt] = "Concrete",
+	[Enum.Material.Mud] = "Ground",
+	[Enum.Material.Ground] = "Dirt",
+	[Enum.Material.Concrete] = "Concrete",
+	[Enum.Material.CorrodedMetal] = "Metal_Solid",
+	--[Enum.Material.Cobblestone] = ,
+	[Enum.Material.Wood] = "Wood",
+	[Enum.Material.WoodPlanks] = "Wood",
+	--[Enum.Material.Sand] = "Sand",
+	--[Enum.Material.Sandstone] = "Sand",
+	--[Enum.Material.Snow] = "Snow",
+	--[Enum.Material.Ice] = "Ice",
+	--[Enum.Material.LeafyGrass] = "Grass",
+	--[Enum.Material.Salt] = "Concrete",
+	--[Enum.Material.Limestone] = "Concrete",
+	[Enum.Material.Basalt] = "Concrete",
+	--[Enum.Material.Pavement] = "Concrete",
+	--[Enum.Material.Brick] = "Concrete",
+	--[Enum.Material.Glacier] = "Ice",
+}
+
 local LastMaterial: string = nil
 local LastNum: number = nil
 
@@ -27,6 +51,13 @@ function GetSelf()
 end
 
 local function FootstepLoop()
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+
+	for i, v in pairs(Character:WaitForChild("HumanoidRootPart"):GetChildren()) do
+		if v:IsA("Sound") and not v:GetAttribute("Ignore") then
+			v:Destroy()
+		end
+	end
 	if Character:WaitForChild("Humanoid").Health <= 0 then
 		return
 	end
@@ -50,16 +81,16 @@ local function FootstepLoop()
 			Character.HumanoidRootPart.Size - Vector3.new(0.1, 0, 0.1),
 			Vector3.new(0, -4, 0) * (Character.Humanoid.HipHeight + 1),
 			castParams
-		)
+		) :: RaycastResult
 		if cast then
-			if
-				HumanoidStateType == Enum.HumanoidStateType.Jumping
-				or HumanoidStateType == Enum.HumanoidStateType.FallingDown
-				or HumanoidStateType == Enum.HumanoidStateType.Freefall
-			then
-				return
-			end
-			local soundOveride = cast.Instance:GetAttribute("Material")
+			--if
+			--	HumanoidStateType == Enum.HumanoidStateType.Jumping
+			--	or HumanoidStateType == Enum.HumanoidStateType.FallingDown
+			--	or HumanoidStateType == Enum.HumanoidStateType.Freefall
+			--then
+			--	return
+			--end
+			local soundOveride = cast.Instance:GetAttribute("Material") or TerrainMaterialConversion[cast.Material]
 			--if cast.Instance.Name == "Wood Pallet" then
 			--local NewPart = Instance.new("Part", workspace.DebugFolder)
 			--NewPart.Shape = Enum.PartType.Ball
@@ -72,7 +103,6 @@ local function FootstepLoop()
 
 			if soundOveride then
 				local soundTable: table = FOOTSTEPS.Raw[soundOveride]:GetChildren()
-
 				local newNum = math.random(#soundTable)
 				if LastMaterial == soundOveride and #soundOveride ~= 1 then
 					while newNum == LastNum do
@@ -85,18 +115,49 @@ local function FootstepLoop()
 				LastNum = newNum
 
 				sound.Name = "step"
-				if ControllerHandler.IsCrouching then
-					sound.Volume = 0.05
-				else
-					sound.Volume = 0.33
-				end
+				sound.Volume = 0.33
 				sound.RollOffMode = Enum.RollOffMode.Linear
 				sound.RollOffMinDistance = MIN_DISTANCE
 				sound.RollOffMaxDistance = MAX_DISTANCE
 				sound.Parent = Character.HumanoidRootPart
+
+				if ControllerHandler.IsCrouching then 
+					sound.Volume = 0.05
+				end
 				sound:Play()
 
 				Debris:AddItem(sound, sound.TimeLength + 0.1)
+			else
+				print(cast.Material)
+				--t("b")
+				--ast.Instance == Workspace.Terrain then
+				--if not TerrainMaterialConversion[cast.Material] then
+				--end
+
+				--local soundTable: table = FOOTSTEPS.Raw[TerrainMaterialConversion[cast.Material]]:GetChildren()
+				--print(TerrainMaterialConversion[cast.Material], cast.Material)
+				--local newNum = math.random(#soundTable)
+				----if LastMaterial == soundOveride and #soundOveride ~= 1 then
+				--while newNum == LastNum do
+				--	newNum = math.random(#soundTable)
+				--	print("while")
+				--end
+				----end
+				--local sound: Sound = soundTable[newNum]:Clone()
+
+				--LastMaterial = TerrainMaterialConversion[cast.Material]
+				--LastNum = newNum
+
+				--sound.Name = "step"
+				--sound.Volume = 0.33
+				--sound.RollOffMode = Enum.RollOffMode.Linear
+				--sound.RollOffMinDistance = MIN_DISTANCE
+				--sound.RollOffMaxDistance = MAX_DISTANCE
+				--sound.Parent = Character.HumanoidRootPart
+				--sound:Play()
+
+				--Debris:AddItem(sound, sound.TimeLength + 0.1)
+				--end
 			end
 		end
 	end
@@ -107,12 +168,6 @@ end
 
 function Handler:Start()
 	task.wait(0.1)
-	for i, v in pairs(Character:WaitForChild("HumanoidRootPart"):GetChildren()) do
-		if v:IsA("Sound") then
-			v:Destroy()
-		end
-	end
-
 	FootstepLoop()
 end
 
