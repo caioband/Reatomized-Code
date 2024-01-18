@@ -12,6 +12,7 @@ local SPEED_MAXIMUM = 14
 local MIN_DISTANCE = 0
 local MAX_DISTANCE = 100
 
+
 local FOOTSTEPS: Folder = ReplicatedStorage:WaitForChild("Footsteps")
 
 local SKIN_VECTOR = Vector3.new(0.1, 0, 0.1)
@@ -20,13 +21,15 @@ local CharInfo = Player.Character or Player.CharacterAdded:Wait()
 local ControllerHandler = require(CharInfo:WaitForChild("[Rojo]").Controller.Handler)
 -- Vars --
 
-local TerrainMaterialConversion = {
+local CAN_PLAY_SOUND = true
+Handler.TerrainMaterialConversion = {
 	[Enum.Material.Grass] = "Grass",
 	[Enum.Material.Asphalt] = "Concrete",
 	[Enum.Material.Mud] = "Ground",
 	[Enum.Material.Ground] = "Dirt",
 	[Enum.Material.Concrete] = "Concrete",
 	[Enum.Material.CorrodedMetal] = "Metal_Solid",
+	[Enum.Material.Metal] = "Grate_Metal",
 	--[Enum.Material.Cobblestone] = ,
 	[Enum.Material.Wood] = "Wood",
 	[Enum.Material.WoodPlanks] = "Wood",
@@ -43,8 +46,8 @@ local TerrainMaterialConversion = {
 	--[Enum.Material.Glacier] = "Ice",
 }
 
-local LastMaterial: string = nil
-local LastNum: number = nil
+Handler.LastMaterial = nil
+Handler.LastNum = nil
 
 function GetSelf()
 	return Handler
@@ -52,11 +55,15 @@ end
 
 local function FootstepLoop()
 	local Character = Player.Character or Player.CharacterAdded:Wait()
-
+	--print(Character.HumanoidRootPart.AssemblyLinearVelocity.Y)
 	for i, v in pairs(Character:WaitForChild("HumanoidRootPart"):GetChildren()) do
 		if v:IsA("Sound") and not v:GetAttribute("Ignore") then
 			v:Destroy()
 		end
+	end
+	if Character.Humanoid:GetState() ~= Enum.HumanoidStateType.Running then
+		CAN_PLAY_SOUND = false
+		--print(Character.Humanoid:GetState())
 	end
 	if Character:WaitForChild("Humanoid").Health <= 0 then
 		return
@@ -90,7 +97,7 @@ local function FootstepLoop()
 			--then
 			--	return
 			--end
-			local soundOveride = cast.Instance:GetAttribute("Material") or TerrainMaterialConversion[cast.Material]
+			local soundOveride = cast.Instance:GetAttribute("Material") or Handler.TerrainMaterialConversion[cast.Material]
 			--if cast.Instance.Name == "Wood Pallet" then
 			--local NewPart = Instance.new("Part", workspace.DebugFolder)
 			--NewPart.Shape = Enum.PartType.Ball
@@ -101,18 +108,18 @@ local function FootstepLoop()
 			--NewPart.Position = cast.Position
 			--end
 
-			if soundOveride then
+			if soundOveride and CAN_PLAY_SOUND then
 				local soundTable: table = FOOTSTEPS.Raw[soundOveride]:GetChildren()
 				local newNum = math.random(#soundTable)
-				if LastMaterial == soundOveride and #soundOveride ~= 1 then
-					while newNum == LastNum do
+				if Handler.LastMaterial == soundOveride and #soundOveride ~= 1 then
+					while newNum == Handler.LastNum do
 						newNum = math.random(#soundTable)
 					end
 				end
 				local sound: Sound = soundTable[newNum]:Clone()
 
-				LastMaterial = soundOveride
-				LastNum = newNum
+				Handler.LastMaterial = soundOveride
+				Handler.LastNum = newNum
 
 				sound.Name = "step"
 				sound.Volume = 0.33
@@ -163,6 +170,7 @@ local function FootstepLoop()
 	end
 	task.delay(delayTime, function()
 		FootstepLoop()
+		CAN_PLAY_SOUND = true
 	end)
 end
 
