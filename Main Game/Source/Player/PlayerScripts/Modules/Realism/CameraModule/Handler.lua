@@ -27,7 +27,10 @@ Handler.RenderStepped = nil
 Handler.FirstPerson = {}
 Handler.FirstPerson.Activated = false
 Handler.FirstPerson.Modes = {}
-
+Handler.CameraOffset = {}
+Handler.CameraOffset.Normal = Vector3.new(.25, 0, -1)
+Handler.CameraOffset.Crouched = Vector3.new(.25, -2, -1)
+Handler.CameraOffset.Running = Vector3.new(.25, 0, -3)
 ---- Calm mode offsets
 Handler.FirstPerson.Modes.Calm = {}
 Handler.FirstPerson.Modes.Calm.Idle = {}
@@ -41,11 +44,12 @@ Handler.FirstPerson.Modes.Panting.Idle.X = 4
 Handler.FirstPerson.Modes.Panting.Idle.Y = 0.5
 
 function Handler:FirstPersonCamera(dt)
+	if ControllerHandler.ShakingCamera == true then return end
 	if ControllerHandler.CrouchTweeStarted == true then
 		return
 	end
 	Handler.Limiter += dt
-
+	local VelocityY = Character.HumanoidRootPart.AssemblyLinearVelocity.Y
 	if not Handler.FirstPerson.Activated then
 		Player.CameraMode = Enum.CameraMode.LockFirstPerson
 		Handler.FirstPerson.Activated = true
@@ -72,13 +76,23 @@ function Handler:FirstPersonCamera(dt)
 		Handler.CurrentVel = Vel
 		--Camera.CFrame = Camera.CFrame * CFrame.new(0,CalculateCurve(7,.4) * Vel / 12, 0) * CFrame.Angles(0,0,math.rad(CalculateCurve(2.5,.4) * Vel/12) + math.rad(Drift))
 		if ControllerHandler.IsCrouching then
-			Character.Humanoid.CameraOffset = ConvCFrameToOrientation(sway) + Vector3.new(0, -2, 0)
+			Character.Humanoid.CameraOffset = ConvCFrameToOrientation(sway) + Handler.CameraOffset.Crouched
 		elseif not ControllerHandler.IsCrouching then
-			Character.Humanoid.CameraOffset = ConvCFrameToOrientation(sway)
+			if Character.Humanoid.WalkSpeed <= 11 then
+				local crouchTween = TweenService:Create(Character.Humanoid, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CameraOffset = ConvCFrameToOrientation(sway) + Handler.CameraOffset.Normal})
+				crouchTween:Play()
+			else
+				local crouchTween = TweenService:Create(Character.Humanoid, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CameraOffset = ConvCFrameToOrientation(sway) + Handler.CameraOffset.Running})
+				crouchTween:Play()
+				--Character.Humanoid.CameraOffset = ConvCFrameToOrientation(sway) + Handler.CameraOffset.Running
+			end
 		end
-
+		
+		if math.ceil(VelocityY) == 0 then
+			VelocityY = 1
+		end
 		Camera.CFrame = Camera.CFrame
-			* CFrame.new(0, CalculateCurve(14, 0.2) * Vel / 24, 0)
+			* CFrame.new(0, CalculateCurve(14, 0.2) * Vel/24, 0)
 			* CFrame.Angles(0, 0, math.rad(CalculateCurve(5, 0.3) * Vel / 12) + math.rad(Drift))
 
 		Handler.Limiter -= 1 / 60

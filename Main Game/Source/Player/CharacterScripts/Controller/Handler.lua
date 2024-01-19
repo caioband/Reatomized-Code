@@ -9,6 +9,8 @@ local Character = Player.Character or Player.CharacterAdded:Wait()
 local Camera = workspace.CurrentCamera
 local Humanoid = Character:WaitForChild("Humanoid")
 local FOOTSTEPS: Folder = ReplicatedStorage:WaitForChild("Footsteps")
+local Camera = workspace.CurrentCamera
+local CameraShaker = require(ReplicatedStorage["[Rojo]"].CameraShake)
 --local FootstepsHandler = require(Player.PlayerScripts["[Rojo]"].Modules:WaitForChild("Realism").FootstepModule.Handler)
 
 local Handler = {}
@@ -37,12 +39,17 @@ Handler.TerrainMaterialConversion = {
 }
 Handler.IsRunning = false
 Handler.IsCrouching = false
+Handler.ShakingCamera = false
 Handler.CrouchTweeStarted = false
 Handler.StartingSpeed = 8
 Handler.MaxSpeed = 16
 Handler.CrouchSpeed = 5
 Handler.RunButtonPressed = false
 Handler.YCharacterVelocity = 0
+Handler.CameraOffset = {}
+Handler.CameraOffset.Normal = Vector3.new(.25, 0, -1)
+Handler.CameraOffset.Crouched = Vector3.new(.25, -2, -1)
+Handler.CameraOffset.Running = Vector3.new(.25, 0, -3)
 Handler.Actions = {
 	["Sprint"] = function(Is, Io)
 		if Is == Enum.UserInputState.Begin then
@@ -89,7 +96,7 @@ Handler.Actions = {
 			Handler.IsRunning = false
 			if Humanoid then
 				if Handler.IsCrouching == false then
-					goal.CameraOffset = Vector3.new(0, -2, 0)
+					goal.CameraOffset = Vector3.new(.25, -2, -1)
 					Handler.IsCrouching = true
 					task.spawn(function()
 						repeat
@@ -101,7 +108,7 @@ Handler.Actions = {
 					Humanoid.WalkSpeed = Handler.StartingSpeed
 					Handler.IsCrouching = false
 					Handler.CrouchTweeCompleted = false
-					goal.CameraOffset = Vector3.new(0, 0, 0)
+					goal.CameraOffset = Vector3.new(.25, 0, -1)
 				end
 			end
 		end
@@ -112,9 +119,23 @@ Handler.Actions = {
 			Handler.CrouchTweeStarted = false
 		end)
 	end,
-	["YCharacterVelocity"] = function()
+	["ShakeCamera"] = function()
 		local Character = game.Players.LocalPlayer.Character
-		print(Character.Humanoid.FloorMaterial)
+		local camShake = CameraShaker.new(Enum.RenderPriority.Camera.Value, function(shakeCf)
+			Camera.CFrame = Camera.CFrame * shakeCf
+		end)
+		--Handler.ShakingCamera = true
+		--print(Character.HumanoidRootPart.AssemblyLinearVelocity.Y)
+		camShake:Start()
+		camShake:ShakeOnce(math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y) *.1,math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y) * .1,math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y) *.006,math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y)*.006)
+		--task.delay(1, function()
+		--	Handler.ShakingCamera = false
+		--end)
+		--task.delay(2,function()
+		--	camShake:Stop()
+		--	Handler.ShakingCamera = false
+		--end)
+		--print(Character.Humanoid.FloorMaterial)
 	end,
 }
 local function HandleAction(actionName, inputState, _inputObject)
@@ -123,13 +144,28 @@ local function HandleAction(actionName, inputState, _inputObject)
 	end
 end
 
+function CalculateCurve(Base: number, Set: number): number
+	return math.sin(os.clock() * Base) * Set
+end
+
+
+
 function Handler:CharacterMovimentation()
 	ContextActionService:BindAction("Sprint", HandleAction, true, Enum.KeyCode.LeftShift, Enum.KeyCode.Thumbstick1)
 	ContextActionService:BindAction("Crouch", HandleAction, true, Enum.KeyCode.LeftControl, Enum.KeyCode.Thumbstick2)
-	--RunService:BindToRenderStep("YCharacterVelocity", Enum.RenderPriority.Character.Value, Handler.Actions["YCharacterVelocity"]) 
+	RunService:BindToRenderStep("ShowArms", Enum.RenderPriority.Character.Value, function()
+		for i,v : BasePart in pairs(Character:GetChildren()) do
+			if not v:IsA("BasePart") then continue end
+			if v.Name ~= "Head" then
+				v.LocalTransparencyModifier = 0
+				v.CastShadow = false
+				--print(v.LocalTransparencyModifier)
+			end
+		end
+	end)
 	Character.Humanoid.StateChanged:Connect(function(old, new)
 		if new == Enum.HumanoidStateType.Landed then
-			print(Character.Humanoid.FloorMaterial)
+			--print(Character.Humanoid.FloorMaterial)
 			local soundOveride = Handler.TerrainMaterialConversion[Character.Humanoid.FloorMaterial]
 			if not soundOveride then return end
 			local soundTable: table = FOOTSTEPS.Raw[soundOveride]:GetChildren()
@@ -144,6 +180,7 @@ function Handler:CharacterMovimentation()
 			sound:SetAttribute("Ignore", true)
 			sound:Play()
 			Debris:AddItem(sound, sound.TimeLength + 0.1)
+			Handler.Actions["ShakeCamera"]()
 		end
 	end)
 end

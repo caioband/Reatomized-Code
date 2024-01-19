@@ -148,6 +148,10 @@ local posT = Workspace.YourHouse["Sofa Positions"]
 local positions = { posT.pos1, posT.pos2, posT.pos3, posT.pos4 }
 
 local function OnPlayerJoin(player: Player)
+	--player.CharacterAppearanceLoaded:Connect(function(character)
+	--	local animateScript = character:WaitForChild("Animate")
+	--	animateScript:Destroy()
+	--end)
 	-- # LOCK PLAYER
 	player.CharacterAdded:Connect(setCollision)
 	--task.wait(2)
@@ -172,10 +176,11 @@ local function OnPlayerJoin(player: Player)
 		local Humanoid = Character:WaitForChild("Humanoid")
 		local Animator = Humanoid:WaitForChild("Animator")
 		local Animation = ReplicatedFirst.Animations.SofaAnimations[pos.Name]
-
 		local AnimationTrack = Animator:LoadAnimation(Animation) :: AnimationTrack
 		--AnimationTrack.Looped = true
+
 		AnimationTrack.Priority = Enum.AnimationPriority.Action
+		--IdleAnimationTrack:Play()
 		AnimationTrack:Play()
 
 		Animations:FireClient(player, Animation, { Looped = true })
@@ -231,5 +236,7 @@ type ServerData = {
 	["Bunker"]: {},
 	["PrologueCompleted"]: boolean
 }
+
+
 
 Players.PlayerAdded:Connect(OnPlayerJoin)
