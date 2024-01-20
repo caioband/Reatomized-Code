@@ -87,6 +87,7 @@ local function FootstepLoop()
 			--then
 			--	return
 			--end
+
 			local soundOveride = cast.Instance:GetAttribute("Material") or TerrainMaterialConversion[cast.Material]
 			--if cast.Instance.Name == "Wood Pallet" then
 			--local NewPart = Instance.new("Part", workspace.DebugFolder)

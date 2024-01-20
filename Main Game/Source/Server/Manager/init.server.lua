@@ -115,12 +115,10 @@ local function OnServerReady()
 		for _i, player: Player in ipairs(saved) do
 			local char = player.Character or player.CharacterAdded:Wait()
 			char.HumanoidRootPart.Anchored = false
-			print("a")
+
 			teleport(player, BunkerSpawn)
 			Effects:FireClient(player, "FadeEffect", 0.5, 1)
 		end
-
-		
 
 		local Sound = workspace.Musics:WaitForChild("ReatomizedOst-LastMoments") :: Sound
 		if Sound.Playing then
@@ -225,18 +223,15 @@ if not ServerData.PrologueCompleted then
 else
 	local BunkerEntrance = Workspace:WaitForChild("BunkerSpawn")
 
-	for i,v in pairs(Players:GetPlayers()) do 
-		teleport(v, BunkerEntrance)	
+	for i, v in pairs(Players:GetPlayers()) do
+		teleport(v, BunkerEntrance)
 	end
 end
-
 
 type ServerData = {
 	["Players"]: {},
 	["Bunker"]: {},
-	["PrologueCompleted"]: boolean
+	["PrologueCompleted"]: boolean,
 }
-
-
 
 Players.PlayerAdded:Connect(OnPlayerJoin)
