@@ -71,9 +71,10 @@ function ProximityPromptHandler.OnRequire()
 	local atr = Players:GetAttribute("HouseItemLoad")
 	if not atr then
 		repeat
-			atr = Players:GetAttributeChangedSignal("HouseItemLoad"):Wait()
-		until atr ~= nil
+			task.wait()
+		until Players:GetAttribute("HouseItemLoad") == true
 	end
+	print("Items loaded")
 
 	local prompts = CollectionService:GetTagged("Prompt")
 

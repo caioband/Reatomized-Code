@@ -18,6 +18,7 @@ local ServerReady = false
 local DataService = require(script.Parent.Modules.DataService)
 local ServerData = DataService:GetServerData()
 local Bunker = require(script:WaitForChild("Bunker"))
+local ItemHandler = require(script.Parent.Items.Main)
 
 local BunkerTimer = Workspace:WaitForChild("BunkerTimer")
 local Timer = BunkerTimer:WaitForChild("Timer")
@@ -67,7 +68,7 @@ local function OnServerReady()
 	task.spawn(function()
 		local Time = 60
 		if RunService:IsStudio() then
-			Time = 10
+			Time = 60
 		end
 
 		for _i = 1, Time do
@@ -124,6 +125,25 @@ local function OnServerReady()
 		if Sound.Playing then
 			Sound:Stop()
 		end
+
+		ServerData.Bunker.Items = ItemHandler.BunkerTotalItems
+		
+		local BunkerItemsSpawns = workspace:WaitForChild("Bunker").Items:GetChildren() :: table
+
+		for i,v in pairs(BunkerItemsSpawns) do
+			local ItemModel = ReplicatedStorage.HouseItems[v.Name]
+			
+			if ItemModel then
+				local Clone = ItemModel:Clone()
+				
+				if Clone:IsA("Model") then
+					
+				else
+					error(`Item must be a Model`)
+				end
+			end
+		end
+
 	end)
 end
 
@@ -146,6 +166,8 @@ local posT = Workspace.YourHouse["Sofa Positions"]
 local positions = { posT.pos1, posT.pos2, posT.pos3, posT.pos4 }
 
 local function OnPlayerJoin(player: Player)
+	--print("a")
+
 	--player.CharacterAppearanceLoaded:Connect(function(character)
 	--	local animateScript = character:WaitForChild("Animate")
 	--	animateScript:Destroy()
@@ -218,15 +240,7 @@ local function OnServerStart()
 	end)
 end
 
-if not ServerData.PrologueCompleted then
-	OnServerStart()
-else
-	local BunkerEntrance = Workspace:WaitForChild("BunkerSpawn")
 
-	for i, v in pairs(Players:GetPlayers()) do
-		teleport(v, BunkerEntrance)
-	end
-end
 
 type ServerData = {
 	["Players"]: {},
@@ -235,3 +249,28 @@ type ServerData = {
 }
 
 Players.PlayerAdded:Connect(OnPlayerJoin)
+
+if not ServerData.PrologueCompleted then
+	OnServerStart()
+	for i, v in pairs(Players:GetPlayers()) do
+		--print(typeof(v))
+		if not ServerData.Players[tostring(v.UserId)] then
+			print("Player not found")
+			ServerData.Players[tostring(v.UserId)] = DataService.PlayerTemplate
+		else
+			print("Player found")
+		end
+	end
+	print(ServerData.Players)
+else
+	local BunkerEntrance = Workspace:WaitForChild("BunkerSpawn")
+
+	for i, v in pairs(Players:GetPlayers()) do
+		--print(typeof(v))
+		teleport(v, BunkerEntrance)
+		if not ServerData.Players[tostring(v.UserId)] then
+			ServerData.Players[tostring(v.UserId)] = DataService.PlayerTemplate
+		end
+	end
+	print(ServerData.Players)
+end

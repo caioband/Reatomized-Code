@@ -15,11 +15,24 @@ local ProfileService = require(Modules.ProfileService)
 
 -- # ================================ MODULE ================================ #
 local DataService = {}
-DataService.Index = "Player_Save # 0.0.8"
+DataService.Index = "Player_Save # 0.0.13"
+
+DataService.PlayerTemplate = {
+	["Items"] = {},
+	["Sleep"] = 100,
+	["Hunger"] = 100,
+	["Thirst"] = 100,
+	["Sanity"] = 100,
+	["DataInfo"] = {
+		["Version"] = DataService.Index
+	},
+}
 
 DataService.SaveTemplate = {
 	["Players"] = {},
-	["Bunker"] = {},
+	["Bunker"] = {
+		["Items"] = {}
+	},
 	["PrologueCompleted"] = false,
 }
 
@@ -39,6 +52,7 @@ local Profile_Global = require(ReplicatedStorage["[Rojo]"].Profiles)
 
 function DataService:LoadProfile(player: Player): Profile_Global.Profile
 	local IsStudio = RunService:IsStudio() == true
+	local host
 	Players:SetAttribute("IsStudio", IsStudio)
 
 	if not RunService:IsStudio() then
@@ -46,7 +60,7 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 		local teleportData = joinData.TeleportData
 		local HostPlayer = Players:GetPlayerByUserId(teleportData.Host) :: Instance
 
-		local host = teleportData.Host :: number
+		host = teleportData.Host :: number
 		Players:SetAttribute("Host", host)
 		Players:SetAttribute("SaveSlot", teleportData.Host)
 		local isHost = player.UserId == host
@@ -55,6 +69,7 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 			return
 		end
 	else
+		host = player.UserId
 		Players:SetAttribute("Host", player.UserId)
 		Players:SetAttribute("SaveSlot", "Slot1")
 	end
@@ -75,6 +90,11 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 		if player:IsDescendantOf(Players) == true then
 			Profiles[player] = profile
 			Profile_Global[player] = profile
+			if not Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)] then
+				Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)] = DataService.PlayerTemplate
+				Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)]["IsHost"] = true
+			end
+			--print(Profile_Global[player].Data)
 			Players:SetAttribute("ServerDataLoaded", true)
 			DataServiceRemote:FireClient(player)
 		else
@@ -87,7 +107,6 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 	end
 end
 
-function DataService:GetPlayerGeneralData() end
 
 function DataService:GetCurrentSlot()
 	repeat

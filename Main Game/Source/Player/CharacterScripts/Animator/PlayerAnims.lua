@@ -9,7 +9,7 @@ function Handler:StartCharacter()
     IdleAnimationTrack.Priority = Enum.AnimationPriority.Action
     IdleAnimationTrack.Looped = true
     IdleAnimationTrack:Play()
-    print(Animator:GetPlayingAnimationTracks())
+    ---print(Animator:GetPlayingAnimationTracks())
 end
 
 return Handler
