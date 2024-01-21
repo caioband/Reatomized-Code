@@ -127,23 +127,21 @@ local function OnServerReady()
 		end
 
 		ServerData.Bunker.Items = ItemHandler.BunkerTotalItems
-		
+
 		local BunkerItemsSpawns = workspace:WaitForChild("Bunker").Items:GetChildren() :: table
 
-		for i,v in pairs(BunkerItemsSpawns) do
-			local ItemModel = ReplicatedStorage.HouseItems[v.Name]
-			
+		for i, v in pairs(BunkerItemsSpawns) do
+			local ItemModel = ReplicatedStorage.HouseItems[v.Name] :: Model
+
 			if ItemModel then
 				local Clone = ItemModel:Clone()
-				
+
 				if Clone:IsA("Model") then
-					
 				else
-					error(`Item must be a Model`)
+					error(`Item {ItemModel.Name} must be a Model`)
 				end
 			end
 		end
-
 	end)
 end
 
@@ -239,8 +237,6 @@ local function OnServerStart()
 		end
 	end)
 end
-
-
 
 type ServerData = {
 	["Players"]: {},
