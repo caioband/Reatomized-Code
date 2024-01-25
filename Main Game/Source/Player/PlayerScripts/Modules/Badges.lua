@@ -5,7 +5,6 @@ local Badges = {}
 -- # ================================ TYPES ================================ #
 local Types = require(ReplicatedStorage:WaitForChild("[Rojo]"):WaitForChild("Types"))
 
-
 ---@diagnostic disable-next-line: undefined-type
 function Badges.OnProfileLoad(Profile: Types.Profile)
 	--> Soon...

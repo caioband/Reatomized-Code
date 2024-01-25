@@ -24,14 +24,14 @@ DataService.PlayerTemplate = {
 	["Thirst"] = 100,
 	["Sanity"] = 100,
 	["DataInfo"] = {
-		["Version"] = DataService.Index
+		["Version"] = DataService.Index,
 	},
 }
 
 DataService.SaveTemplate = {
 	["Players"] = {},
 	["Bunker"] = {
-		["Items"] = {}
+		["Items"] = {},
 	},
 	["PrologueCompleted"] = false,
 }
@@ -91,8 +91,10 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 			Profiles[player] = profile
 			Profile_Global[player] = profile
 			if not Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)] then
-				Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)] = DataService.PlayerTemplate
-				Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)]["IsHost"] = true
+				Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)] =
+					DataService.PlayerTemplate
+				Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)]["IsHost"] =
+					true
 			end
 			--print(Profile_Global[player].Data)
 			Players:SetAttribute("ServerDataLoaded", true)
@@ -106,7 +108,6 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 		player:Kick()
 	end
 end
-
 
 function DataService:GetCurrentSlot()
 	repeat

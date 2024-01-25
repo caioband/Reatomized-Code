@@ -26,7 +26,9 @@ function Bunker:CreateZone()
 	Zone.playerEntered:Connect(function(player: Player)
 		--print(ItemsHandler, ItemsHandler.PlayerItems, player)
 		self.OnPlayerEntered(player)
-		if not ItemsHandler.PlayerItems[player] then return end
+		if not ItemsHandler.PlayerItems[player] then
+			return
+		end
 		for i, v in pairs(ItemsHandler.PlayerItems[player]) do
 			table.insert(ItemsHandler.BunkerTotalItems, v)
 		end

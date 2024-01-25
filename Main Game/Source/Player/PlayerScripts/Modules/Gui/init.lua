@@ -122,11 +122,11 @@ function GuiHandler:FadeEffect(Time: number, Transparency: number)
 end
 
 function GuiHandler:Init()
-		local Response = Comms:InvokeServer("GetServerData")
-		print(Response)
-		if not Response.PrologueCompleted then
-			PlayerGui:WaitForChild("Ready"):WaitForChild("Freeze").Enabled = true
-		end
+	local Response = Comms:InvokeServer("GetServerData")
+	print(Response)
+	if not Response.PrologueCompleted then
+		PlayerGui:WaitForChild("Ready"):WaitForChild("Freeze").Enabled = true
+	end
 
 	Effects.OnClientEvent:Connect(function(event: string, ...)
 		if event == "FadeEffect" then
@@ -149,8 +149,7 @@ end
 function GuiHandler.OnRequire(self, str: {})
 	Storage = str
 
-	PlayerReady.OnClientEvent:Once(function()
-	end)
+	PlayerReady.OnClientEvent:Once(function() end)
 end
 
 --> Starts the module

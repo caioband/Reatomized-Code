@@ -12,7 +12,6 @@ local Humanoid = Character:WaitForChild("Humanoid")
 local Animator = Humanoid:WaitForChild("Animator")
 local PlayerAnims = require(script.PlayerAnims)
 
-
 PlayerAnims:StartCharacter()
 
 ContentProvider:PreloadAsync(Animations, function(assetId) end)

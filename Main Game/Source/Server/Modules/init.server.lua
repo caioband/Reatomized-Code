@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Modules = script:GetChildren()
 local Remotes = ReplicatedStorage.Remotes
 local DataService = require(script.DataService)
-local Comms = Remotes:WaitForChild("Comms") ::RemoteFunction
+local Comms = Remotes:WaitForChild("Comms") :: RemoteFunction
 -- # ================================ MODULES ================================ #
 
 local Storage: { Module } = {}
@@ -12,7 +12,7 @@ local Storage: { Module } = {}
 local Requests = {
 	["GetServerData"] = function(Args)
 		return DataService:GetServerData()
-	end
+	end,
 }
 
 local function LoadModule(Module: ModuleScript): Module
@@ -40,7 +40,7 @@ export type Module = {
 
 LoadModules()
 
-Comms.OnServerInvoke = function(Player : Player, BindTo : string, Args : any )
+Comms.OnServerInvoke = function(Player: Player, BindTo: string, Args: any)
 	--print(BindTo)
 	if Requests[BindTo] then
 		return Requests[BindTo](Args)

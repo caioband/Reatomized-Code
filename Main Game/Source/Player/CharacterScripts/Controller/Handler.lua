@@ -47,9 +47,9 @@ Handler.CrouchSpeed = 5
 Handler.RunButtonPressed = false
 Handler.YCharacterVelocity = 0
 Handler.CameraOffset = {}
-Handler.CameraOffset.Normal = Vector3.new(.25, 0, -1)
-Handler.CameraOffset.Crouched = Vector3.new(.25, -2, -1)
-Handler.CameraOffset.Running = Vector3.new(.25, 0, -3)
+Handler.CameraOffset.Normal = Vector3.new(0.25, 0, -1)
+Handler.CameraOffset.Crouched = Vector3.new(0.25, -2, -1)
+Handler.CameraOffset.Running = Vector3.new(0.25, 0, -3)
 Handler.Actions = {
 	["Sprint"] = function(Is, Io)
 		if Is == Enum.UserInputState.Begin then
@@ -96,7 +96,7 @@ Handler.Actions = {
 			Handler.IsRunning = false
 			if Humanoid then
 				if Handler.IsCrouching == false then
-					goal.CameraOffset = Vector3.new(.25, -2, -1)
+					goal.CameraOffset = Vector3.new(0.25, -2, -1)
 					Handler.IsCrouching = true
 					task.spawn(function()
 						repeat
@@ -108,11 +108,12 @@ Handler.Actions = {
 					Humanoid.WalkSpeed = Handler.StartingSpeed
 					Handler.IsCrouching = false
 					Handler.CrouchTweeCompleted = false
-					goal.CameraOffset = Vector3.new(.25, 0, -1)
+					goal.CameraOffset = Vector3.new(0.25, 0, -1)
 				end
 			end
 		end
-		local crouchTween = TweenService:Create(Humanoid, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal)
+		local crouchTween =
+			TweenService:Create(Humanoid, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal)
 		crouchTween:Play()
 		Handler.CrouchTweeStarted = true
 		crouchTween.Completed:Connect(function()
@@ -127,7 +128,12 @@ Handler.Actions = {
 		--Handler.ShakingCamera = true
 		--print(Character.HumanoidRootPart.AssemblyLinearVelocity.Y)
 		camShake:Start()
-		camShake:ShakeOnce(math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y) *.1,math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y) * .1,math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y) *.006,math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y)*.006)
+		camShake:ShakeOnce(
+			math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y) * 0.1,
+			math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y) * 0.1,
+			math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y) * 0.006,
+			math.abs(Character.HumanoidRootPart.AssemblyLinearVelocity.Y) * 0.006
+		)
 		--task.delay(1, function()
 		--	Handler.ShakingCamera = false
 		--end)
@@ -148,14 +154,14 @@ function CalculateCurve(Base: number, Set: number): number
 	return math.sin(os.clock() * Base) * Set
 end
 
-
-
 function Handler:CharacterMovimentation()
 	ContextActionService:BindAction("Sprint", HandleAction, true, Enum.KeyCode.LeftShift, Enum.KeyCode.Thumbstick1)
 	ContextActionService:BindAction("Crouch", HandleAction, true, Enum.KeyCode.LeftControl, Enum.KeyCode.Thumbstick2)
 	RunService:BindToRenderStep("ShowArms", Enum.RenderPriority.Character.Value, function()
-		for i,v : BasePart in pairs(Character:GetChildren()) do
-			if not v:IsA("BasePart") then continue end
+		for i, v: BasePart in pairs(Character:GetChildren()) do
+			if not v:IsA("BasePart") then
+				continue
+			end
 			if v.Name ~= "Head" then
 				v.LocalTransparencyModifier = 0
 				v.CastShadow = false
@@ -167,7 +173,9 @@ function Handler:CharacterMovimentation()
 		if new == Enum.HumanoidStateType.Landed then
 			--print(Character.Humanoid.FloorMaterial)
 			local soundOveride = Handler.TerrainMaterialConversion[Character.Humanoid.FloorMaterial]
-			if not soundOveride then return end
+			if not soundOveride then
+				return
+			end
 			local soundTable: table = FOOTSTEPS.Raw[soundOveride]:GetChildren()
 			local newNum = math.random(#soundTable)
 			local sound: Sound = soundTable[newNum]:Clone()
