@@ -40,7 +40,7 @@ local animNames = {
 		{ id = "http://www.roblox.com/asset/?id=180426354", weight = 10 },
 	},
 	run = {
-		{ id = "run.xml", weight = 10 },
+		{ id = "http://www.roblox.com/asset/?id=180426354", weight = 10 },
 	},
 	jump = {
 		{ id = "http://www.roblox.com/asset/?id=125750702", weight = 10 },
@@ -571,21 +571,6 @@ game:GetService("Players").LocalPlayer.Chatted:connect(function(msg)
 end)
 
 -- emote bindable hook
-script:WaitForChild("PlayEmote").OnInvoke = function(emote)
-	-- Only play emotes when idling
-	if pose ~= "Standing" then
-		return
-	end
-	if emoteNames[emote] ~= nil then
-		-- Default emotes
-		playAnimation(emote, EMOTE_TRANSITION_TIME, Humanoid)
-
-		return true, currentAnimTrack
-	end
-
-	-- Return false to indicate that the emote could not be played
-	return false
-end
 -- main program
 
 -- initialize to idle

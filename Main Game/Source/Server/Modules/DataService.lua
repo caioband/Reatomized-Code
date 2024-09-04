@@ -26,6 +26,7 @@ DataService.PlayerTemplate = {
 	["DataInfo"] = {
 		["Version"] = DataService.Index,
 	},
+	["Lives"] = 1,
 }
 
 DataService.SaveTemplate = {
@@ -49,6 +50,15 @@ DataService.ProfileStore = ProfileService.GetProfileStore(DataService.Index, Dat
 -- # ================================ PROFILE ================================ #
 local Profiles = {}
 local Profile_Global = require(ReplicatedStorage["[Rojo]"].Profiles)
+
+function DataService:OnProfileLoad(plr: Player, profile)
+	print(plr, profile)
+	if profile.Lives == 0 or (not profile.Lives) then
+		profile.Lives = 1
+	else
+		print("Player: "..plr.Name.." | Lives: " .. profile.Lives)
+	end
+end
 
 function DataService:LoadProfile(player: Player): Profile_Global.Profile
 	local IsStudio = RunService:IsStudio() == true
@@ -90,12 +100,23 @@ function DataService:LoadProfile(player: Player): Profile_Global.Profile
 		if player:IsDescendantOf(Players) == true then
 			Profiles[player] = profile
 			Profile_Global[player] = profile
-			if not Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)] then
-				Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)] =
+			print(profile)
+			if not profile.Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)] then
+				profile.Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)] =
 					DataService.PlayerTemplate
-				Profile_Global[player].Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)]["IsHost"] =
+					profile.Data.Saves[Players:GetAttribute("SaveSlot")].Players[tostring(host)]["IsHost"] =
 					true
 			end
+
+			local slot = self:GetCurrentSlot()
+			local data = profile.Data.Saves[slot].Players[tostring(player.UserId)]
+			for index, value in pairs(self.PlayerTemplate) do
+				if (not data[index]) then
+					data[index] = value
+				end
+			end
+			self:OnProfileLoad(player, data)
+
 			--print(Profile_Global[player].Data)
 			Players:SetAttribute("ServerDataLoaded", true)
 			DataServiceRemote:FireClient(player)
@@ -141,7 +162,8 @@ function DataService:GetServerData()
 	end
 end
 
-function DataService.PlayerAdded(player)
+function DataService.PlayerAdded(player: Player)
+	player:LoadCharacter()
 	DataService:LoadProfile(player)
 end
 function DataService.PlayerLeaving(player)

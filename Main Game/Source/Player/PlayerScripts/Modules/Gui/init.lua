@@ -2,7 +2,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Remotes = ReplicatedStorage.Remotes
 local Comms = Remotes:WaitForChild("Comms") :: RemoteFunction
---local ProximityPrompt = require(script.Parent.ProximityPrompt)
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local GuiHandler = {}
@@ -20,7 +19,6 @@ local GLOBAL_CONFIG = {
 	Hover_Scale = 1.2,
 }
 
-local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local PlayerReady = Remotes:WaitForChild("PlayerReady")
 local Effects = Remotes:WaitForChild("Effects")
 
@@ -38,7 +36,7 @@ function GuiButtonObject.new(object: GuiButton)
 
 	self.Object = object
 	self._Connections = {}
-	self.ShouldAnimate = true
+	self.ShouldAnimate = object:GetAttribute("Animate") or true
 	self.HoverSound = SoundService:WaitForChild("GuiButtonHover")
 	self.ClickSound = SoundService:WaitForChild("GuiButtonClick")
 

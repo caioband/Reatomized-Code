@@ -1,5 +1,14 @@
 {
-	"cSpell.enabled": false,
 	"editor.bracketPairColorization.enabled": true,
-	"github.copilot.editor.enableAutoCompletions": true
+	"github.copilot.editor.enableAutoCompletions": true,
+
+	"editor.fontFamily": "JetBrains Mono",
+	"editor.letterSpacing": 0.5,
+	"editor.lineHeight": 1.8,
+	"editor.fontWeight": "400",
+	"editor.fontSize": 14,
+	"editor.smoothScrolling": true,
+	"editor.cursorSmoothCaretAnimation": "explicit",
+
+	"editor.cursorStyle": "line",
 }

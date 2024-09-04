@@ -111,7 +111,7 @@ local function OnServerReady()
 		Effects:FireAllClients("FadeEffect", 0.5, 0)
 
 		task.wait(1.35)
-
+		print("since eh gay")
 		-- # TELEPORT TO BUNKER
 		for _i, player: Player in ipairs(saved) do
 			local char = player.Character or player.CharacterAdded:Wait()
